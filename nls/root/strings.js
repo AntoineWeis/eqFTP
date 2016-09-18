@@ -26,6 +26,20 @@ define({
     "eqftp__settings_file_create" : "Create",
     // This will be shown as title of *Save Dialog Window*
     "eqftp__settings_file_create_dialog_title" : "Save settings file",
+    "eqftp__settings__main_settings_header" : "Main settings",
+    "eqftp__settings__connections_settings_header" : "Connections",
+    "eqftp__settings__folder_for_projects_label" : "Folder for projects",
+    "eqftp__settings__folder_for_projects_placeholder" : "Choose folder",
+    "eqftp__settings__folder_for_projects_hint" : "Choose folder where eqFTP will save downloaded files by default. Each file will be saved in its own respective directory.",
+    "eqftp__settings__time_format_label" : "Timestamp format",
+    "eqftp__settings__time_format_placeholder" : "dd mm yyyy",
+    "eqftp__settings__time_format_hint" : "Use dd - date, MM - month, yy - short year, yyyy - full year, hh - hours, mm - minutes, ss - seconds, SSS - milliseconds, O - timezone offset +hm",
+    "eqftp__settings__debug_mode_label" : "Debug mode",
+    "eqftp__settings__debug_mode_hint" : "Turn on debug mode. Everything will be printed in console.",
+    
+    // This will be placed in Connection's name when it's empty
+    "eqftp__connection__create_new_button" : "Create Connection",
+    "eqftp__connection__name_placeholder" : "New Connection",
     
     "eqftp__password_label" : "Password for settings",
     "eqftp__password_placeholder" : "Enter your password",
@@ -46,6 +60,9 @@ define({
     "error__settings_process_fromJSON_not_json" : "Can't read settings data. It's not a JSON object.",
     
     "warning__password_ask_cancel" : "User cancelled password dialog.",
+    
+    "eqftp__log__settings__save_success" : "Settings saved",
+    "eqftp__log__settings__save_error" : "Cannot save settings",
     
     "eqftp_dummy" : "dummy" // Not used anywhere, just leave it.
 });

@@ -237,6 +237,9 @@
         -webkit-user-select: none;
         user-select: none;
     }
+    &-hidden {
+        display: none;
+    }
     &-hamburger {
         display: block;
         position: relative;
@@ -367,6 +370,50 @@
             margin-top: 2px;
         }
     }
+    &-accordion {
+        border: 1px solid #333;
+        border-radius: 3px;
+        &-group {
+            &.eqftp-active {
+                & .eqftp-accordion-heading {
+                    background-color: rgba(0, 0, 0, 0.1);
+                }
+                & .eqftp-accordion-body {
+                    height: auto;
+                    padding: 3px 5px;
+                    border-bottom: 1px solid #333;
+                }
+            }
+            &:last-child {
+                &.eqftp-active {
+                    & .eqftp-accordion-heading {
+                        border-bottom: 1px solid #333;
+                    }
+                }
+                & .eqftp-accordion-heading {
+                    border-bottom: none;
+                }
+            }
+        }
+        &-heading {
+            border-bottom: 1px solid #333;
+            & a {
+                display: block;
+                color: inherit;
+                cursor: pointer;
+                padding: 3px 5px;
+                font-size: 14px;
+                &:hover {
+                    color: inherit;
+                    text-decoration: none;
+                    background-color: rgba(0, 0, 0, 0.1);
+                }
+            }
+        }
+        &-body {
+            max-height: 200px;
+        }
+    }
 }
 
 .dark {
@@ -453,6 +500,36 @@
         }
         &-password {
             background-color: #47484b;
+        }
+        &-accordion {
+            border: 1px solid #202020;
+            &-group {
+                &.eqftp-active {
+                    & .eqftp-accordion-heading {
+                        background-color: rgba(255, 255, 255, 0.1);
+                    }
+                    & .eqftp-accordion-body {
+                        border-bottom: 1px solid #202020;
+                    }
+                }
+                &:last-child {
+                    &.eqftp-active {
+                        & .eqftp-accordion-heading {
+                            border-bottom: 1px solid #202020;
+                        }
+                    }
+                }
+            }
+            &-heading {
+                border-bottom: 1px solid #202020;
+                & a {
+                    &:hover {
+                        background-color: rgba(255, 255, 255, 0.1);
+                    }
+                }
+            }
+            &-body {
+            }
         }
     }
 }

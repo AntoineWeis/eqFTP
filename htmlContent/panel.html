@@ -25,12 +25,81 @@
         <div class="eqftp-panel__settings_window eqftp-fading">
             <label>{{eqftp__settings_file_label}}</label>
             <div class="form-inline">
-                <input type="text" value="" eqftp-click="ui__panel__settings_window__utils__settings_path_ofd" placeholder="{{eqftp__settings_file_placeholder}}" class="eqftp-panel__settings_window__settings_file_input">
+                <input type="text" value="" eqftp-click="ui__panel__settings_window__utils__settings_path_ofd--callback=load_settings_from_file" placeholder="{{eqftp__settings_file_placeholder}}" class="eqftp-panel__settings_window__settings_file_input">
                 <button class="btn" eqftp-click="ui__panel__settings_window__utils__settings_create_file">{{eqftp__settings_file_create}}</button>
             </div>
             <div class="form-inline">
                 <div class="eqftp-checkbox">
                     <label><input type="checkbox" name="eqftpSettings[misc][encrypted]"> {{eqftp__settings__encrypt_settings_file}}</label>
+                </div>
+            </div>
+            <div class="eqftp-accordion">
+                <div class="eqftp-accordion-group">
+                    <div class="eqftp-accordion-heading">
+                        <a class="eqftp-accordion-toggle" eqftp-click="ui__accordion">
+                            {{eqftp__settings__main_settings_header}}
+                        </a>
+                    </div>
+                    <div class="eqftp-accordion-body collapse">
+                        <div class="eqftp-accordion-inner">
+                            <div>
+                                <label for="eqftp-folder_for_projects">{{eqftp__settings__folder_for_projects_label}}</label>
+                                <input type="text" id="eqftp-folder_for_projects" placeholder="{{eqftp__settings__folder_for_projects_placeholder}}" title="{{eqftp__settings__folder_for_projects_hint}}" eqftp-click="ui__panel__settings_window__utils__settings_path_ofd--directory=1;callback=set_ofd_value" name="eqftpSettings[main][projects_folder]">
+                            </div>
+                            <div>
+                                <label for="eqftp-time_format">{{eqftp__settings__time_format_label}}</label>
+                                <input type="text" id="eqftp-time_format" placeholder="{{eqftp__settings__time_format_placeholder}}" title="{{eqftp__settings__time_format_hint}}" name="eqftpSettings[main][date_format]">
+                            </div>
+                            <div>
+                                <div class="eqftp-checkbox">
+                                    <label title="{{eqftp__settings__debug_mode_hint}}"><input type="checkbox" name="eqftpSettings[main][debug]"> {{eqftp__settings__debug_mode_label}}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="eqftp-accordion-group">
+                    <div class="eqftp-accordion-heading">
+                        <a class="eqftp-accordion-toggle" eqftp-click="ui__accordion">
+                            {{eqftp__settings__connections_settings_header}}
+                        </a>
+                    </div>
+                    <div class="eqftp-accordion-body collapse">
+                        <div class="eqftp-accordion-inner">
+                            <div>
+                                <a class="btn"><i class="fa fa-plus"></i>&nbsp;{{eqftp__connection__create_new_button}}</a>
+                            </div>
+                            <div id="eqftp-connection-donor" class="eqftp-hidden">
+                                <div class="eqftp-accordion-group">
+                                    <div class="eqftp-accordion-heading">
+                                        <a class="eqftp-accordion-toggle" eqftp-click="ui__accordion">
+                                            <span class="eqftp-connection-name">{{eqftp__connection__name_placeholder}}</span>
+                                        </a>
+                                    </div>
+                                    <div class="eqftp-accordion-body collapse">
+                                        <div class="eqftp-accordion-inner">
+                                            <div>
+                                                <label for="eqftp-folder_for_projects">{{eqftp__connection__name_label}}</label>
+                                                <input type="text" id="eqftp-folder_for_projects" placeholder="{{eqftp__settings__folder_for_projects_placeholder}}" title="{{eqftp__settings__folder_for_projects_hint}}" eqftp-click="ui__panel__settings_window__utils__settings_path_ofd--directory=1;callback=set_ofd_value" name="eqftpSettings[main][projects_folder]">
+                                            </div>
+                                            <div>
+                                                <label for="eqftp-time_format">{{eqftp__settings__time_format_label}}</label>
+                                                <input type="text" id="eqftp-time_format" placeholder="{{eqftp__settings__time_format_placeholder}}" title="{{eqftp__settings__time_format_hint}}" name="eqftpSettings[main][date_format]">
+                                            </div>
+                                            <div>
+                                                <div class="eqftp-checkbox">
+                                                    <label title="{{eqftp__settings__debug_mode_hint}}"><input type="checkbox" name="eqftpSettings[main][debug]"> {{eqftp__settings__debug_mode_label}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>                                
+                            </div>
+                            <div id="eqftp-connections-list" class="eqftp-accordion">
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="eqftp-panel__settings_window__save_button_holder text-right">
