@@ -44,7 +44,7 @@
                         <div class="eqftp-accordion-inner">
                             <div>
                                 <label for="eqftp-folder_for_projects">{{eqftp__settings__folder_for_projects_label}}</label>
-                                <input type="text" id="eqftp-folder_for_projects" placeholder="{{eqftp__settings__folder_for_projects_placeholder}}" title="{{eqftp__settings__folder_for_projects_hint}}" eqftp-click="ui__panel__settings_window__utils__settings_path_ofd--directory=1;callback=set_ofd_value" name="eqftpSettings[main][projects_folder]">
+                                <input type="text" id="eqftp-folder_for_projects" placeholder="{{eqftp__settings__folder_for_projects_placeholder}}" title="{{eqftp__settings__folder_for_projects_hint}}" eqftp-click="ui__panel__settings_window__utils__settings_path_ofd--directory=1;callback=set_projects_folder" name="eqftpSettings[main][projects_folder]">
                             </div>
                             <div>
                                 <label for="eqftp-time_format">{{eqftp__settings__time_format_label}}</label>
@@ -67,7 +67,7 @@
                     <div class="eqftp-accordion-body collapse">
                         <div class="eqftp-accordion-inner">
                             <div>
-                                <a class="btn"><i class="fa fa-plus"></i>&nbsp;{{eqftp__connection__create_new_button}}</a>
+                                <a class="btn" eqftp-click="ui__clone--from=#eqftp-connection-donor>div;to=#eqftp-connections-list;callback=editNewConnection">{{eqftp__connection__create_new_button}}</a>
                             </div>
                             <div id="eqftp-connection-donor" class="eqftp-hidden">
                                 <div class="eqftp-accordion-group">
@@ -79,12 +79,51 @@
                                     <div class="eqftp-accordion-body collapse">
                                         <div class="eqftp-accordion-inner">
                                             <div>
-                                                <label for="eqftp-folder_for_projects">{{eqftp__connection__name_label}}</label>
-                                                <input type="text" id="eqftp-folder_for_projects" placeholder="{{eqftp__settings__folder_for_projects_placeholder}}" title="{{eqftp__settings__folder_for_projects_hint}}" eqftp-click="ui__panel__settings_window__utils__settings_path_ofd--directory=1;callback=set_ofd_value" name="eqftpSettings[main][projects_folder]">
+                                                <div class="row-fluid">
+                                                    <div class="span9">
+                                                        <label for="eqftp-connection__name">{{eqftp__connection__name_label}}</label>
+                                                        <input type="text" id="eqftp-connection__name" placeholder="{{eqftp__connection__name_placeholder}}" title="{{eqftp__connection__name_hint}}" name="connection[{$i}][name]" eqftp-keyup="ui__panel__settings_window__utils__write_connections_name" style="width:100%;" required>
+                                                    </div>
+                                                    <div class="span3">
+                                                        <label for="eqftp-connection__protocol">&nbsp;</label>
+                                                        <select name="connection[{$i}][protocol]" id="eqftp-connection__protocol" style="width:100%;" title="{{eqftp__connection__protocol_hint}}">
+                                                            <option value="ftp">FTP</option>
+                                                            <option value="sftp">SFTP</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div>
-                                                <label for="eqftp-time_format">{{eqftp__settings__time_format_label}}</label>
-                                                <input type="text" id="eqftp-time_format" placeholder="{{eqftp__settings__time_format_placeholder}}" title="{{eqftp__settings__time_format_hint}}" name="eqftpSettings[main][date_format]">
+                                                <div class="row-fluid">
+                                                    <div class="span9">
+                                                        <label for="eqftp-connection__server">{{eqftp__connection__server_label}}</label>
+                                                        <input type="text" id="eqftp-connection__server" placeholder="{{eqftp__connection__server_placeholder}}" title="{{eqftp__connection__server_hint}}" name="connection[{$i}][server]" style="width:100%;" required>
+                                                    </div>
+                                                    <div class="span3">
+                                                        <label for="eqftp-connection__port">{{eqftp__connection__port_label}}</label>
+                                                        <input type="text" id="eqftp-connection__port" placeholder="{{eqftp__connection__port_placeholder}}" title="{{eqftp__connection__port_hint}}" name="connection[{$i}][port]" style="width:100%;" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="row-fluid">
+                                                    <div class="span12">
+                                                        <label for="eqftp-connection__password">{{eqftp__connection__password_label}}</label>
+                                                        <input type="text" id="eqftp-connection__password" placeholder="{{eqftp__connection__password_placeholder}}" title="{{eqftp__connection__password_hint}}" name="connection[{$i}][password]" style="width:100%;">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="row-fluid">
+                                                    <div class="span9">
+                                                        <label for="eqftp-connection__localpath">{{eqftp__connection__localpath_label}}</label>
+                                                        <input type="text" id="eqftp-connection__localpath" placeholder="{{eqftp__connection__localpath_placeholder}}" title="{{eqftp__connection__localpath_hint}}" name="connection[{$i}][localpath]" style="width:100%;" data-changed="false" eqftp-click="utils__open_file_dialog--directory=1;callback=set_ofd_value;title={{eqftp__connection__localpath_windowtitle}}">
+                                                    </div>
+                                                    <div class="span3">
+                                                        <label>&nbsp;</label>
+                                                        <a class="btn" style="margin: 0;padding: 5px 8px;"><i class="fa fa-magic"></i></a>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div>
                                                 <div class="eqftp-checkbox">

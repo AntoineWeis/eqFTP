@@ -39,7 +39,32 @@ define({
     
     // This will be placed in Connection's name when it's empty
     "eqftp__connection__create_new_button" : "Create Connection",
+    
+    "eqftp__connection__name_label" : "Connection's name",
     "eqftp__connection__name_placeholder" : "New Connection",
+    "eqftp__connection__name_hint" : "This name will be shown in list of connections",
+    
+    "eqftp__connection__protocol_label" : "Connection's protocol",
+    "eqftp__connection__protocol_placeholder" : "FTP",
+    "eqftp__connection__protocol_hint" : "FTP or SFTP",
+    
+    "eqftp__connection__server_label" : "Server",
+    "eqftp__connection__server_placeholder" : "IP or domain name",
+    "eqftp__connection__server_hint" : "Some kind of address to connect to. You can paste here a string in format ftp://username:password@servername:port.",
+    
+    "eqftp__connection__port_label" : "Port",
+    "eqftp__connection__port_placeholder" : "21",
+    "eqftp__connection__port_hint" : "By default it's 21 for FTP and 22 for SFTP.",
+    
+    "eqftp__connection__password_label" : "Password",
+    "eqftp__connection__password_placeholder" : "****",
+    "eqftp__connection__password_hint" : "Password to server or RSA key.",
+    
+    "eqftp__connection__localpath_label" : "Local path",
+    "eqftp__connection__localpath_placeholder" : "Path to local folder",
+    "eqftp__connection__localpath_hint" : "By default eqFTP will create a new folder in Folder for projects with name of this Connection",
+    "eqftp__connection__localpath_windowtitle" : "Choose local folder for Connection",
+    
     
     "eqftp__password_label" : "Password for settings",
     "eqftp__password_placeholder" : "Enter your password",
