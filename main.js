@@ -515,7 +515,11 @@ define(function (require, exports, module) {
                 },
                 open_file_dialog: function (params, e) {
                     if (!params.start_path || !eqftp.utils.check.isString(params.start_path)) {
-                        params.start_path = false;
+                        if (e && e.target && $(e.target).is('input')) {
+                            params.start_path = $(e.target).val();
+                        } else {
+                            params.start_path = false;
+                        }
                     }
                     if (!params.title || !eqftp.utils.check.isString(params.title)) {
                         params.title = strings.eqftp__file_opening_dialog_title;
@@ -961,6 +965,13 @@ define(function (require, exports, module) {
                             $(e.target).val(result);
                         } else if (params.allow_empty) {
                             $(e.target).val('');
+                        }
+                    },
+                    "set_connection_localpath": function (result, params, e) {
+                        $(e.target).attr('data-changed', 'true');
+                        // TODO : Add check for duplicate localpath
+                        if (result) {
+                            $(e.target).val(result);
                         }
                     },
                     "load_settings_from_file": function (result) {
