@@ -323,6 +323,18 @@ define(function (require, exports, module) {
                             f(clone);
                         }
                     }
+                },
+                toggle: {
+                    class: function (params, e) {
+                        switch(params.relativity) {
+                            case 'closest':
+                                $(e.target).closest(params.target).toggleClass(params.class);
+                                break;
+                            default:
+                                $(params.target).toggleClass(params.class);
+                                break;
+                        }
+                    }
                 }
             },
             utils: {

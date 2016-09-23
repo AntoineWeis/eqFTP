@@ -480,8 +480,8 @@
   .eqftp-accordion-group:not(.eqftp-active) .eqftp-accordion-heading a {
     background-color: inherit; }
   .eqftp-accordion-group:not(.eqftp-active) .eqftp-accordion-body {
-    height: 0;
     overflow-y: hidden;
+    height: 0;
     padding: 0;
     border-bottom: none !important; }
   .eqftp-accordion-group:last-child.eqftp-active .eqftp-accordion-heading {
@@ -501,7 +501,18 @@
         text-decoration: none;
         background-color: rgba(0, 0, 0, 0.1); }
   .eqftp-accordion-body {
-    max-height: 300px; }
+    max-height: 400px;
+    position: relative; }
+.eqftp-secondary_link {
+  color: #838383; }
+.eqftp-connection__additional_settings {
+  display: none; }
+.eqftp-connection__main_settings {
+  display: block; }
+.eqftp-show_additional_settings .eqftp-connection__main_settings {
+  display: none; }
+.eqftp-show_additional_settings .eqftp-connection__additional_settings {
+  display: block; }
 
 .dark .eqftp-panel {
   background-color: #47484b; }
@@ -570,5 +581,7 @@
     border-bottom: none; }
   .dark .eqftp-accordion-heading {
     border-bottom: 1px solid #202020; }
+.dark .eqftp-secondary_link {
+  color: #838383; }
 
 /*# sourceMappingURL=ext.css.map */

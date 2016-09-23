@@ -394,8 +394,8 @@
                     }
                 }
                 & .eqftp-accordion-body {
-                    height: 0;
                     overflow-y: hidden;
+                    height: 0;
                     padding: 0;
                     border-bottom: none !important;
                 }
@@ -429,7 +429,26 @@
             }
         }
         &-body {
-            max-height: 300px;
+            max-height: 400px;
+            position: relative;
+        }
+    }
+    &-secondary_link {
+        color: #838383;
+    }
+    
+    &-connection__additional_settings {
+        display: none;
+    }
+    &-connection__main_settings {
+        display: block;
+    }
+    &-show_additional_settings {
+        & .eqftp-connection__main_settings {
+            display: none;
+        }
+        & .eqftp-connection__additional_settings {
+            display: block;
         }
     }
 }
@@ -566,6 +585,10 @@
             }
             &-body {
             }
+        }
+        
+        &-secondary_link {
+            color: #838383;
         }
     }
 }

@@ -37,10 +37,10 @@ define({
     "eqftp__settings__debug_mode_label" : "Debug mode",
     "eqftp__settings__debug_mode_hint" : "Turn on debug mode. Everything will be printed in console.",
     
-    // This will be placed in Connection's name when it's empty
     "eqftp__connection__create_new_button" : "Create Connection",
     
     "eqftp__connection__name_label" : "Connection's name",
+    // This will be placed in Connection's name when it's empty
     "eqftp__connection__name_placeholder" : "New Connection",
     "eqftp__connection__name_hint" : "This name will be shown in list of connections",
     
@@ -64,6 +64,26 @@ define({
     "eqftp__connection__localpath_placeholder" : "Path to local folder",
     "eqftp__connection__localpath_hint" : "By default eqFTP will create a new folder in Folder for projects with name of this Connection",
     "eqftp__connection__localpath_windowtitle" : "Choose local folder for Connection",
+    
+    "eqftp__connection__remotepath_label" : "Remote path",
+    "eqftp__connection__remotepath_placeholder" : "Path to folder on server",
+    
+    "eqftp__connection__addtional_settings" : "Show additional settings",
+    
+    "eqftp__connection__check_difference_label" : "Check difference between files",
+    "eqftp__connection__check_difference_hint" : "eqFTP will check difference between local and remote copy of file when you try download or upload it.",
+    
+    "eqftp__connection__autoupload_label" : "Automatically upload changed files",
+    "eqftp__connection__autoupload_hint" : "eqFTP will automatically upload any changed file in project's directory.",
+    "eqftp__connection__remotepath_hint" : "By default your server decides where to start browsing.",
+    
+    "eqftp__connection__ignore_list_label" : "Ignore list",
+    "eqftp__connection__ignore_list_placeholder" : "Use gitignore syntax",
+    "eqftp__connection__ignore_list_hint" : "eqFTP will use these rules on auto-upload function.",
+    
+    "eqftp__connection__keep_alive_label" : "Keep Alive interval",
+    "eqftp__connection__keep_alive_placeholder" : "By default its 10",
+    "eqftp__connection__keep_alive_hint" : "eqFTP will send some commands to prevent disconnection by server.",
     
     
     "eqftp__password_label" : "Password for settings",
