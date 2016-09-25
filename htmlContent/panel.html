@@ -83,11 +83,11 @@
                                                     <div class="row-fluid">
                                                         <div class="span9">
                                                             <label for="eqftp-connection__name">{{eqftp__connection__name_label}}</label>
-                                                            <input type="text" id="eqftp-connection__name" placeholder="{{eqftp__connection__name_placeholder}}" title="{{eqftp__connection__name_hint}}" name="connection[{$i}][name]" eqftp-keyup="ui__panel__settings_window__utils__write_connections_name" style="width:100%;" required>
+                                                            <input type="text" id="eqftp-connection__name" placeholder="{{eqftp__connection__name_placeholder}}" title="{{eqftp__connection__name_hint}}" name="[connections][{$i}][name]" eqftp-keyup="ui__panel__settings_window__utils__write_connections_name" style="width:100%;" required>
                                                         </div>
                                                         <div class="span3">
                                                             <label for="eqftp-connection__protocol">&nbsp;</label>
-                                                            <select name="connection[{$i}][protocol]" id="eqftp-connection__protocol" style="width:100%;" title="{{eqftp__connection__protocol_hint}}">
+                                                            <select name="[connections][{$i}][protocol]" id="eqftp-connection__protocol" style="width:100%;" title="{{eqftp__connection__protocol_hint}}" eqftp-change="ui__panel__settings_window__utils__change_mode">
                                                                 <option value="ftp">FTP</option>
                                                                 <option value="sftp">SFTP</option>
                                                             </select>
@@ -98,29 +98,41 @@
                                                     <div class="row-fluid">
                                                         <div class="span9">
                                                             <label for="eqftp-connection__server">{{eqftp__connection__server_label}}</label>
-                                                            <input type="text" id="eqftp-connection__server" placeholder="{{eqftp__connection__server_placeholder}}" title="{{eqftp__connection__server_hint}}" name="connection[{$i}][server]" style="width:100%;" required>
+                                                            <input type="text" id="eqftp-connection__server" placeholder="{{eqftp__connection__server_placeholder}}" title="{{eqftp__connection__server_hint}}" name="[connections][{$i}][server]" style="width:100%;" required eqftp-input="ui__panel__settings_window__utils__parse_connection_string">
                                                         </div>
                                                         <div class="span3">
                                                             <label for="eqftp-connection__port">{{eqftp__connection__port_label}}</label>
-                                                            <input type="text" id="eqftp-connection__port" placeholder="{{eqftp__connection__port_placeholder}}" title="{{eqftp__connection__port_hint}}" name="connection[{$i}][port]" style="width:100%;" required>
+                                                            <input type="text" id="eqftp-connection__port" placeholder="{{eqftp__connection__port_placeholder}}" title="{{eqftp__connection__port_hint}}" name="[connections][{$i}][port]" style="width:100%;" required>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div>
+                                                    <div class="row-fluid">
+                                                        <div class="span6">
+                                                            <label for="eqftp-connection__login">{{eqftp__connection__login_label}}</label>
+                                                            <input type="text" id="eqftp-connection__login" placeholder="{{eqftp__connection__login_placeholder}}" title="{{eqftp__connection__login_hint}}" name="[connections][{$i}][login]" style="width:100%;">
+                                                        </div>
+                                                        <div class="span6">
+                                                            <label for="eqftp-connection__password">{{eqftp__connection__password_label}}</label>
+                                                            <input type="password" id="eqftp-connection__password" placeholder="{{eqftp__connection__password_placeholder}}" title="{{eqftp__connection__password_hint}}" name="[connections][{$i}][password]" style="width:100%;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="eqftp-sftp_only">
                                                     <div class="row-fluid">
                                                         <div class="span12">
-                                                            <label for="eqftp-connection__password">{{eqftp__connection__password_label}}</label>
-                                                            <input type="text" id="eqftp-connection__password" placeholder="{{eqftp__connection__password_placeholder}}" title="{{eqftp__connection__password_hint}}" name="connection[{$i}][password]" style="width:100%;">
+                                                            <label for="eqftp-connection__rsa">{{eqftp__connection__rsa_label}}</label>
+                                                            <input type="text" id="eqftp-connection__rsa" placeholder="{{eqftp__connection__rsa_placeholder}}" title="{{eqftp__connection__rsa_hint}}" name="[connections][{$i}][rsa]" style="width:100%;" data-changed="false" eqftp-click="utils__open_file_dialog--directory=1;callback=set_ofd_value;title={{eqftp__connection__rsa_windowtitle}}">
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div>
                                                     <div class="row-fluid">
-                                                        <div class="span9">
+                                                        <div class="span10">
                                                             <label for="eqftp-connection__localpath">{{eqftp__connection__localpath_label}}</label>
-                                                            <input type="text" id="eqftp-connection__localpath" placeholder="{{eqftp__connection__localpath_placeholder}}" title="{{eqftp__connection__localpath_hint}}" name="connection[{$i}][localpath]" style="width:100%;" data-changed="false" eqftp-click="utils__open_file_dialog--directory=1;callback=set_connection_localpath;title={{eqftp__connection__localpath_windowtitle}}">
+                                                            <input type="text" id="eqftp-connection__localpath" placeholder="{{eqftp__connection__localpath_placeholder}}" title="{{eqftp__connection__localpath_hint}}" name="[connections][{$i}][localpath]" style="width:100%;" data-changed="false" eqftp-click="utils__open_file_dialog--directory=1;callback=set_connection_localpath;title={{eqftp__connection__localpath_windowtitle}}">
                                                         </div>
-                                                        <div class="span3">
+                                                        <div class="span2">
                                                             <label>&nbsp;</label>
                                                             <a class="btn" style="margin: 0;padding: 5px 8px;"><i class="fa fa-magic"></i></a>
                                                         </div>
@@ -130,7 +142,17 @@
                                                     <div class="row-fluid">
                                                         <div class="span12">
                                                             <label for="eqftp-connection__remotepath">{{eqftp__connection__remotepath_label}}</label>
-                                                            <input type="text" id="eqftp-connection__remotepath" placeholder="{{eqftp__connection__remotepath_placeholder}}" title="{{eqftp__connection__remotepath_hint}}" name="connection[{$i}][remotepath]" style="width:100%;">
+                                                            <input type="text" id="eqftp-connection__remotepath" placeholder="{{eqftp__connection__remotepath_placeholder}}" title="{{eqftp__connection__remotepath_hint}}" name="[connections][{$i}][remotepath]" style="width:100%;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="eqftp-connection__extras">
+                                                    <div class="row-fluid">
+                                                        <div class="span11">
+                                                            <a href="#" class="eqftp-secondary_link" eqftp-click="ui__toggle__class--target=.eqftp-accordion-body;relativity=closest;class=eqftp-show_additional_settings">{{eqftp__connection__addtional_settings}}</a>
+                                                        </div>
+                                                        <div class="span1">
+                                                            <a href="#" class="eqftp-secondary_link" eqftp-click="ui__toggle__class--target=.eqftp-accordion-body;relativity=closest;class=eqftp-show_removal_offer"><i class="fa fa-trash"></i></a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -140,7 +162,7 @@
                                                     <div class="row-fluid">
                                                         <div class="span12">
                                                             <div class="eqftp-checkbox">
-                                                                <label title="{{eqftp__connection__check_difference_hint}}"><input type="checkbox" name="connection[{$i}][check_difference]"> {{eqftp__connection__check_difference_label}}</label>
+                                                                <label title="{{eqftp__connection__check_difference_hint}}"><input type="checkbox" name="[connections][{$i}][check_difference]"> {{eqftp__connection__check_difference_label}}</label>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -149,7 +171,7 @@
                                                     <div class="row-fluid">
                                                         <div class="span12">
                                                             <div class="eqftp-checkbox">
-                                                                <label title="{{eqftp__connection__autoupload_hint}}"><input type="checkbox" name="connection[{$i}][autoupload]"> {{eqftp__connection__autoupload_label}}</label>
+                                                                <label title="{{eqftp__connection__autoupload_hint}}"><input type="checkbox" name="[connections][{$i}][autoupload]"> {{eqftp__connection__autoupload_label}}</label>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -158,7 +180,7 @@
                                                     <div class="row-fluid">
                                                         <div class="span12">
                                                             <label for="eqftp-connection__ignore_list">{{eqftp__connection__ignore_list_label}}</label>
-                                                            <textarea name="connection[{$i}][ignore_list]" id="eqftp-connection__ignore_list" style="width:100%; height: 100px; box-sizing: border-box; resize: vertical;" placeholder="{{eqftp__connection__ignore_list_placeholder}}" title="{{eqftp__connection__ignore_list_hint}}"></textarea>
+                                                            <textarea name="[connections][{$i}][ignore_list]" id="eqftp-connection__ignore_list" style="width:100%; height: 140px; box-sizing: border-box; resize: vertical;" placeholder="{{eqftp__connection__ignore_list_placeholder}}" title="{{eqftp__connection__ignore_list_hint}}"></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -166,13 +188,31 @@
                                                     <div class="row-fluid">
                                                         <div class="span12">
                                                             <label for="eqftp-connection__keep_alive">{{eqftp__connection__keep_alive_label}}</label>
-                                                            <input type="text" id="eqftp-connection__keep_alive" placeholder="{{eqftp__connection__keep_alive_placeholder}}" title="{{eqftp__connection__keep_alive_hint}}" name="connection[{$i}][keep_alive]" style="width:100%;" pattern="\d+">
+                                                            <input type="text" id="eqftp-connection__keep_alive" placeholder="{{eqftp__connection__keep_alive_placeholder}}" title="{{eqftp__connection__keep_alive_hint}}" name="[connections][{$i}][keep_alive]" style="width:100%;" pattern="\d+">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="eqftp-connection__extras">
+                                                    <div class="row-fluid">
+                                                        <div class="span11">
+                                                            <a href="#" class="eqftp-secondary_link" eqftp-click="ui__toggle__class--target=.eqftp-accordion-body;relativity=closest;class=eqftp-show_additional_settings">{{eqftp__connection__basic_settings}}</a>
+                                                        </div>
+                                                        <div class="span1">
+                                                            <a href="#" class="eqftp-secondary_link" eqftp-click="ui__toggle__class--target=.eqftp-accordion-body;relativity=closest;class=eqftp-show_removal_offer"><i class="fa fa-trash"></i></a>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div>
-                                                <a href="#" class="eqftp-secondary_link" eqftp-click="ui__toggle__class--target=.eqftp-accordion-body;relativity=closest;class=eqftp-show_additional_settings">{{eqftp__connection__addtional_settings}}</a>
+                                            <div class="eqftp-connection__removing">
+                                                <div class="row-fluid">
+                                                    <div class="span12">
+                                                        {{eqftp__connection__removal_warning_text}}
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                                        <a href="#" eqftp-click="ui__remove_element--target=.eqftp-accordion-group;relativity=closest">{{eqftp__button_yes}}</a>
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                                        <a href="#" class="eqftp-secondary_link" eqftp-click="ui__toggle__class--target=.eqftp-accordion-body;relativity=closest;class=eqftp-show_removal_offer">{{eqftp__button_no}}</a>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

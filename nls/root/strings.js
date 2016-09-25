@@ -60,14 +60,24 @@ define({
     "eqftp__connection__password_placeholder" : "****",
     "eqftp__connection__password_hint" : "Password to server or RSA key.",
     
+    "eqftp__connection__login_label" : "Login",
+    "eqftp__connection__login_placeholder" : "Login to server",
+    "eqftp__connection__login_hint" : "Can be root or something else. Check your server settings.",
+    
     "eqftp__connection__localpath_label" : "Local path",
     "eqftp__connection__localpath_placeholder" : "Path to local folder",
     "eqftp__connection__localpath_hint" : "By default eqFTP will create a new folder in Folder for projects with name of this Connection",
     "eqftp__connection__localpath_windowtitle" : "Choose local folder for Connection",
     
+    "eqftp__connection__rsa_label" : "RSA Key",
+    "eqftp__connection__rsa_placeholder" : "Path to RSA key",
+    "eqftp__connection__rsa_hint" : "Your server might need it",
+    "eqftp__connection__rsa_windowtitle" : "Choose RSA key for Connection",
+    
     "eqftp__connection__remotepath_label" : "Remote path",
     "eqftp__connection__remotepath_placeholder" : "Path to folder on server",
     
+    "eqftp__connection__basic_settings" : "Show basic settings",
     "eqftp__connection__addtional_settings" : "Show additional settings",
     
     "eqftp__connection__check_difference_label" : "Check difference between files",
@@ -85,6 +95,8 @@ define({
     "eqftp__connection__keep_alive_placeholder" : "By default its 10",
     "eqftp__connection__keep_alive_hint" : "eqFTP will send some commands to prevent disconnection by server.",
     
+    "eqftp__connection__removal_warning_text" : "Remove this Connection? This cannot be undone.",
+    
     
     "eqftp__password_label" : "Password for settings",
     "eqftp__password_placeholder" : "Enter your password",
@@ -98,6 +110,10 @@ define({
     "eqftp__button_cancel" : "Cancel",
     // Universal button that says "Continue". Some sort of "OK", but more human-ish version, I think.
     "eqftp__button_continue" : "Continue",
+    // Universal button that says "Yes". Literally means acceptance of offer.
+    "eqftp__button_yes" : "Yes",
+    // Universal button that says "No". Well, it's opposite of Yes - offer denying.
+    "eqftp__button_no" : "No",
     "eqftp__button_save" : "Save",
     
     "error__settings_process_fromJSON_not_string" : "Can't read settings data. It's not a text.",

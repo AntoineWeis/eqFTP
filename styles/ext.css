@@ -475,7 +475,7 @@
   .eqftp-accordion-group.eqftp-active .eqftp-accordion-body {
     overflow-y: auto;
     height: auto;
-    padding: 3px 5px;
+    padding: 10px 5px;
     border-bottom: 1px solid #333; }
   .eqftp-accordion-group:not(.eqftp-active) .eqftp-accordion-heading a {
     background-color: inherit; }
@@ -509,9 +509,23 @@
   display: none; }
 .eqftp-connection__main_settings {
   display: block; }
+.eqftp-connection__removing {
+  display: none; }
 .eqftp-show_additional_settings .eqftp-connection__main_settings {
   display: none; }
 .eqftp-show_additional_settings .eqftp-connection__additional_settings {
+  display: block; }
+.eqftp-show_removal_offer .eqftp-connection__extras {
+  display: none; }
+.eqftp-show_removal_offer .eqftp-connection__removing {
+  display: block; }
+.eqftp-sftp_only {
+  display: none; }
+.eqftp-ftp_only {
+  display: none; }
+.eqftp-sftp .eqftp-sftp_only {
+  display: block; }
+.eqftp-ftp .eqftp-ftp_only {
   display: block; }
 
 .dark .eqftp-panel {
@@ -580,7 +594,11 @@
   .dark .eqftp-accordion-group:last-child:not(.eqftp-active) .eqftp-accordion-heading {
     border-bottom: none; }
   .dark .eqftp-accordion-heading {
-    border-bottom: 1px solid #202020; }
+    border-bottom: 1px solid #202020;
+    background-color: #2D2E30; }
+  .dark .eqftp-accordion-body {
+    background-color: #3C3F41;
+    box-shadow: 0 10px 10px -10px rgba(0, 0, 0, 0.6) inset, 0 -10px 10px -10px rgba(0, 0, 0, 0.6) inset; }
 .dark .eqftp-secondary_link {
   color: #838383; }
 

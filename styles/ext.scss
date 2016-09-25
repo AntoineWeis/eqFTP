@@ -383,7 +383,7 @@
                 & .eqftp-accordion-body {
                     overflow-y: auto;
                     height: auto;
-                    padding: 3px 5px;
+                    padding: 10px 5px;
                     border-bottom: 1px solid #333;
                 }
             }
@@ -443,11 +443,38 @@
     &-connection__main_settings {
         display: block;
     }
+    &-connection__removing {
+        display: none;
+    }
     &-show_additional_settings {
         & .eqftp-connection__main_settings {
             display: none;
         }
         & .eqftp-connection__additional_settings {
+            display: block;
+        }
+    }
+    &-show_removal_offer {
+        & .eqftp-connection__extras {
+            display: none;
+        }
+        & .eqftp-connection__removing {
+            display: block;
+        }
+    }
+    &-sftp_only {
+        display: none;
+    }
+    &-ftp_only {
+        display: none;
+    }
+    &-sftp {
+        & .eqftp-sftp_only {
+            display: block;
+        }
+    }
+    &-ftp {
+        & .eqftp-ftp_only {
             display: block;
         }
     }
@@ -582,8 +609,11 @@
             }
             &-heading {
                 border-bottom: 1px solid #202020;
+                background-color: #2D2E30;
             }
             &-body {
+                background-color: #3C3F41;
+                box-shadow: 0 10px 10px -10px rgba(0,0,0,0.6) inset, 0 -10px 10px -10px rgba(0,0,0,0.6) inset
             }
         }
         
