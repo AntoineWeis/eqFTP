@@ -85,8 +85,13 @@ define(function (require, exports, module) {
                                 render: function (rerender) {
                                     if ($(eqftp.variables.ui.eqftp_panel__server_list).length === 0 || (rerender && rerender === 'rerender')) {
                                         var out = "";
-                                        out += eqftp.utils.render(tpl__panel__searchDropdown__row, {title: 'T', host: 'H', user: 'U'});
-                                        out += eqftp.utils.render(tpl__panel__searchDropdown__row, {title: 'T2', host: 'H2', user: 'U2'});
+                                        _.forOwn(_eqFTPSettings.connections, function (value, key) {
+                                            out += eqftp.utils.render(tpl__panel__searchDropdown__row, {
+                                                title: value.name,
+                                                host: value.server,
+                                                user: value.login
+                                            });
+                                        });
                                         out = eqftp.utils.render(tpl__panel__searchDropdown__outer, {content: out});
                                         if ($(eqftp.variables.ui.eqftp_panel__server_list).length === 1) {
                                             $(eqftp.variables.ui.eqftp_panel__server_list).remove();
@@ -181,6 +186,9 @@ define(function (require, exports, module) {
                                     params.start_path = _homeFolder;
                                 }
                                 eqftp.utils.save_file_dialog(params);
+                            },
+                            settings_reload: function (params, e) {
+                                eqftp._settings._init();
                             },
                             save: function () {
                                 $('[name^="eqftpSettings"]').each(function () {
@@ -869,6 +877,7 @@ define(function (require, exports, module) {
                                 eqftp.variables.eqFTP.misc.last_settings_file = file_path;
                                 eqftp._preferences.set();
                                 eqftp.ui.panel.settings_window.render();
+                                eqftp.ui.panel.toolbar.search.dropdown.render('rerender');
                             }
                         };
                     }
@@ -935,6 +944,7 @@ define(function (require, exports, module) {
                             FileUtils.writeText(fileEntry, data, true)
                                 .done(function () {
                                     eqftp.utils.log(strings.eqftp__log__settings__save_success, "success");
+                                    eqftp.ui.panel.toolbar.search.dropdown.render('rerender');
                                     callback(false, settings);
                                 })
                                 .fail(function (error) {

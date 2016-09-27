@@ -505,11 +505,15 @@
     position: relative; }
 .eqftp-secondary_link {
   color: #838383; }
-.eqftp-connection__additional_settings {
+.eqftp-connection__new_connection {
+  margin-bottom: 10px;
+  width: calc(100% - 7px);
+  box-sizing: border-box; }
+.eqftp-connection__removing {
   display: none; }
 .eqftp-connection__main_settings {
   display: block; }
-.eqftp-connection__removing {
+.eqftp-connection__additional_settings {
   display: none; }
 .eqftp-show_additional_settings .eqftp-connection__main_settings {
   display: none; }

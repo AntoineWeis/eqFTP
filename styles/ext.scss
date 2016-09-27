@@ -436,15 +436,21 @@
     &-secondary_link {
         color: #838383;
     }
-    
-    &-connection__additional_settings {
-        display: none;
-    }
-    &-connection__main_settings {
-        display: block;
-    }
-    &-connection__removing {
-        display: none;
+    &-connection {
+        &__new_connection {
+            margin-bottom: 10px;
+            width: calc(100% - 7px);
+            box-sizing: border-box;
+        }
+        &__removing {
+            display: none;
+        }
+        &__main_settings {
+            display: block;
+        }
+        &__additional_settings {
+            display: none;
+        }
     }
     &-show_additional_settings {
         & .eqftp-connection__main_settings {
