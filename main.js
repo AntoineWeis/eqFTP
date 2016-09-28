@@ -87,6 +87,7 @@ define(function (require, exports, module) {
                                         var out = "";
                                         _.forOwn(_eqFTPSettings.connections, function (value, key) {
                                             out += eqftp.utils.render(tpl__panel__searchDropdown__row, {
+                                                id: key,
                                                 title: value.name,
                                                 host: value.server,
                                                 user: value.login
@@ -109,6 +110,14 @@ define(function (require, exports, module) {
                                 show: function () {
                                     eqftp.ui.panel.toolbar.search.dropdown.render();
                                     $(eqftp.variables.ui.eqftp_panel__server_list).slideDown(80);
+                                },
+                                _connect: function (params, e) {
+                                    if (!params.connection_id) {
+                                        eqftp._e('No connection_id found');
+                                        return false;
+                                    }
+                                    $(eqftp.variables.ui.eqftp_panel__server_list).slideUp(80);
+                                    eqftp.connections.open(params.connection_id);
                                 }
                             },
                             mode: {
@@ -730,6 +739,34 @@ define(function (require, exports, module) {
                     $(".eqftp-infofooter--msgholder").append('<div class="eqftp-infofooter--msg eqftp-infofooter--' + type + '"><span class="eqftp-infofooter--time">' + time + '</span><span>' + text + '</span></div>');
                 }
             },
+            connections: {
+                _getByID: function (id) {
+                    if (!id) {
+                        return false;
+                    }
+                    if (!_eqFTPSettings.connections || !_eqFTPSettings.connections[id]) {
+                        eqftp._e('No Connection found with given connection_id OR no connections found in current settings file. Reload setting file and try again.');
+                        return false;
+                    }
+                    return _eqFTPSettings.connections[id];
+                },
+                open: function (params) {
+                    /*
+                    protocol, server, port, login, password, RSA key (if sftp)
+                    */
+                    if (eqftp.utils.check.isString(params)) {
+                        params = this._getByID(params);
+                        if (!params) {
+                            return false;
+                        }
+                    }
+                    if (!eqftp.utils.check.isObject(params)) {
+                        return false;
+                    }
+                    
+                    console.log(params);
+                }
+            },
             _password: {
                 get: function (callback) {
                     if (!eqftp.utils.check.isFunction(callback)) {
@@ -878,6 +915,7 @@ define(function (require, exports, module) {
                                 eqftp._preferences.set();
                                 eqftp.ui.panel.settings_window.render();
                                 eqftp.ui.panel.toolbar.search.dropdown.render('rerender');
+                                eqftp.utils.log(strings.eqftp__log__settings__load_success, 'info');
                             }
                         };
                     }
@@ -1135,6 +1173,8 @@ define(function (require, exports, module) {
             _e: function (text, errtype, error) {
                 // prints error in log
                 console.error(text);
+                eqftp.utils.log('[ERROR] ' + text, 'error');
+                
                 if (errtype) {
                     var params = {
                         title: '[v' + _version + '][AutoError] ',
@@ -1168,7 +1208,7 @@ define(function (require, exports, module) {
             _w: function (text) {
                 // prints error in log
                 console.warn(text);
-            }
+            },
         };
     
     AppInit.htmlReady(function () {

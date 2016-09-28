@@ -124,6 +124,7 @@ define({
     
     "eqftp__log__settings__save_success" : "Settings saved",
     "eqftp__log__settings__save_error" : "Cannot save settings",
+    "eqftp__log__settings__load_success" : "Settings loaded",
     
     "eqftp_dummy" : "dummy" // Not used anywhere, just leave it.
 });
