@@ -31,6 +31,7 @@ define(function (require, exports, module) {
         FileSystem = brackets.getModule("filesystem/FileSystem"),
         FileUtils = brackets.getModule("file/FileUtils"),
         PreferencesManager = brackets.getModule("preferences/PreferencesManager"),
+        NodeConnection = brackets.getModule("utils/NodeConnection"),
         
         strings = require("strings"),
         CryptoJS = require("crypto-js/crypto-js"),
@@ -47,6 +48,7 @@ define(function (require, exports, module) {
         _homeFolder = _defaultEqFTPFolder,
         _eqFTPSettings = {},
         _eqFTPPassword = false,
+        _node,
         
         _version = "0.8.0",
         eqftp = {
@@ -728,6 +730,16 @@ define(function (require, exports, module) {
                     }
                     return n.toString(32) + suf;
                 },
+                chain: function () {
+                    var functions = Array.prototype.slice.call(arguments, 0);
+                    if (functions.length > 0) {
+                        var firstFunction = functions.shift(),
+                            firstPromise = firstFunction.call();
+                        firstPromise.done(function () {
+                            eqftp.utils.chain.apply(null, functions);
+                        });
+                    }
+                },
                 log: function (text, type) {
                     if (!text) {
                         return false;
@@ -1275,6 +1287,31 @@ define(function (require, exports, module) {
     
     AppInit.appReady(function () {
         $("#main-toolbar .buttons .eqftp-toolbar__icon.disabled").removeClass('disabled');
+
+        _node = new NodeConnection();
+        function connectNode() {
+            var connectionPromise = _node.connect(true);
+            connectionPromise.fail(function (err) {
+                eqftp._e(err);
+            });
+            return connectionPromise;
+        }
+        function loadNodeFtp() {
+            var path = ExtensionUtils.getModulePath(module, "node/ftpDomain");
+            var loadPromise = _node.loadDomains([path], true);
+            loadPromise.fail(function (err) {
+                eqftp._e(err);
+            });
+            loadPromise.done(function (done) {
+                _node.on("eqFTP:event", function(event, params) {
+                    console.log(event, params);
+                });
+                _node.domains.eqFTP.do(['utils', 'event'], {what: "test", mindblow: true});
+            });
+            return loadPromise;
+        }
+        eqftp.utils.chain(connectNode, loadNodeFtp);
+        
         eqftp._init();
     });
 });
