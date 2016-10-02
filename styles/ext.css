@@ -184,6 +184,9 @@
 .fa-magic:before {
   content: ""; }
 
+.fa-trash:before {
+  content: ""; }
+
 .eqftp-toolbar__icon {
   background-image: url(img/toolbar__icon.svg);
   background-size: contain; }

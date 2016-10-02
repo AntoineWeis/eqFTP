@@ -97,6 +97,20 @@ define({
     
     "eqftp__connection__removal_warning_text" : "Remove this Connection? This cannot be undone.",
     
+    // connection_hash is a parameter - leave it as it is
+    "eqftp__domain__connection__create__error" : "Cannot create connection. No connection_hash passed.",
+    
+    // Connection's name will be appended after this text, so leave a space in the end of a string
+    "eqftp__connection__event__closed" : "Connection closed: ",
+    "eqftp__connection__event__opened" : "Connection opened: ",
+    "eqftp__connection__event__error" : "Connection error: ",
+    
+    "eqftp__connection__errors__ENOTFOUND" : "Server not found. Upstream DNS server replied that there are no matching records.",
+    "eqftp__connection__errors__ECONNREFUSED" : "No connection could be made because the target machine actively refused it. This usually results from trying to connect to a service that is inactive on the foreign host.",
+    "eqftp__connection__errors__ECONNRESET" : "A connection was forcibly closed by a peer. This normally results from a loss of the connection on the remote socket due to a timeout or reboot.",
+    "eqftp__connection__errors__ENOENT" : "No entity (file or directory) could be found by the given path.",
+    "eqftp__connection__errors__ETIMEDOUT" : "A connect or send request failed because the connected party did not properly respond after a period of time. ",
+    
     
     "eqftp__password_label" : "Password for settings",
     "eqftp__password_placeholder" : "Enter your password",

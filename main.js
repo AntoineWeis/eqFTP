@@ -37,7 +37,7 @@ define(function (require, exports, module) {
         CryptoJS = require("crypto-js/crypto-js"),
         dateFormat = require("date-format/date_format"),
         
-        _ = require("lodash"),
+        _ = require("node/node_modules/lodash/lodash"),
         
         tpl__toolbar = Mustache.render(require("text!htmlContent/toolbar.html"), strings),
         tpl__panel = Mustache.render(require("text!htmlContent/panel.html"), strings),
@@ -119,7 +119,7 @@ define(function (require, exports, module) {
                                         return false;
                                     }
                                     $(eqftp.variables.ui.eqftp_panel__server_list).slideUp(80);
-                                    eqftp.connections.open(params.connection_id);
+                                    eqftp.connections.ls(params.connection_id);
                                 }
                             },
                             mode: {
@@ -304,7 +304,7 @@ define(function (require, exports, module) {
                             change_mode: function (params, e) {
                                 var v = $(e.target).val().toLocaleString();
                                 if (v === 'sftp' || v === 'ftp') {
-                                    $(e.target).closest('.eqftp-accordion-group').removeClass('eqftp-sftp eqftp-ftp').addClass('eqftp-'+v);
+                                    $(e.target).closest('.eqftp-accordion-group').removeClass('eqftp-sftp eqftp-ftp').addClass('eqftp-' + v);
                                 }
                             }
                         },
@@ -321,7 +321,7 @@ define(function (require, exports, module) {
                                     callback: function (clone) {
                                         clone.find('*[name]').each(function () {
                                             var name = 'eqftpSettings' + $(this).attr('name');
-                                            name = name.replace(/{\$i}/gmi, key);
+                                            name = name.replace(/\{\$i\}/gmi, key);
                                             $(this).attr('name', name);
                                             eqftp.ui.panel.settings_window.utils._setValue(name);
                                         });
@@ -432,27 +432,16 @@ define(function (require, exports, module) {
                 }
             },
             utils: {
-                // accepts string `path__to__method--parameter=value;second=foobar` excluding eqftp in start
-                action: function (action, event, returnit) {
-                    var actions = action.split('--'),
-                        methods = actions[0].split('__'),
-                        tmp = eqftp,
-                        args = {};
-                    if (!!actions[1]) {
-                        var arguments_pairs = actions[1].split(';');
-                        arguments_pairs.forEach(function (pair, n) {
-                            pair = pair.split('=');
-                            args[pair[0]] = pair[1];
-                        });
-                    }
-                    methods.some(function (o, n) {
+                do: function (path, params, event, returnit) {
+                    var tmp = eqftp;
+                    path.some(function (o, n) {
                         if (eqftp.utils.check.isObject(tmp[o])) {
                             tmp = tmp[o];
                         } else if (eqftp.utils.check.isFunction(tmp[o])) {
                             if (returnit) {
                                 return tmp[o];
                             }
-                            tmp[o](args, event);
+                            tmp[o](params, event);
                             return true;
                         } else {
                             if (returnit) {
@@ -461,6 +450,20 @@ define(function (require, exports, module) {
                             return true;
                         }
                     });
+                },
+                // accepts string `path__to__method--parameter=value;second=foobar` excluding eqftp in start
+                action: function (action, event, returnit) {
+                    var actions = action.split('--'),
+                        methods = actions[0].split('__'),
+                        args = {};
+                    if (!!actions[1]) {
+                        var arguments_pairs = actions[1].split(';');
+                        arguments_pairs.forEach(function (pair, n) {
+                            pair = pair.split('=');
+                            args[pair[0]] = pair[1];
+                        });
+                    }
+                    eqftp.utils.do(methods, args, event, returnit);
                 },
                 // all sorts of checks
                 check: {
@@ -709,7 +712,7 @@ define(function (require, exports, module) {
                         login: m[4],
                         password: m[6],
                         domain: m[7],
-                        port: m[9],
+                        port: m[9]
                     };
                 },
                 uniq: function () {
@@ -740,9 +743,16 @@ define(function (require, exports, module) {
                         });
                     }
                 },
+                md5: function (value) {
+                    return CryptoJS.MD5(value).toString();
+                },
                 log: function (text, type) {
                     if (!text) {
                         return false;
+                    }
+                    var match = text.match(/^$(.*)/);
+                    if (match) {
+                        text = strings[match[1]];
                     }
                     if (!type) {
                         type = "info";
@@ -760,23 +770,59 @@ define(function (require, exports, module) {
                         eqftp._e('No Connection found with given connection_id OR no connections found in current settings file. Reload setting file and try again.');
                         return false;
                     }
+                    _eqFTPSettings.connections[id] = eqftp.connections._fillParams(_eqFTPSettings.connections[id]);
                     return _eqFTPSettings.connections[id];
                 },
-                open: function (params) {
-                    /*
-                    protocol, server, port, login, password, RSA key (if sftp)
-                    */
-                    if (eqftp.utils.check.isString(params)) {
-                        params = this._getByID(params);
-                        if (!params) {
+                _fillParams: function (connection) {
+                    _.forOwn(_eqFTPSettings.connections, function (value, key) {
+                        if (value === connection) {
+                            connection.id = key;
                             return false;
                         }
+                    });
+                    if (!connection.connection_hash) {
+                        connection.connection_hash = eqftp.utils.md5(connection.protocol + connection.server + connection.port + connection.login);
                     }
-                    if (!eqftp.utils.check.isObject(params)) {
+                    return connection;
+                },
+                cd: function (connection_id, path) {
+                    if (!connection_id) {
                         return false;
                     }
-                    
-                    console.log(params);
+                    var connection = eqftp.connections._getByID(connection_id);
+                    if (!connection) {
+                        return false;
+                    }
+                    eqftp.domain.do(['ftp', 'cd'], {
+                        connection: connection,
+                        path: path || connection.remotepath
+                    }, function (result) {
+                        console.log(result);
+                    });
+                },
+                ls: function (connection_id, path) {
+                    if (!connection_id) {
+                        return false;
+                    }
+                    var connection = eqftp.connections._getByID(connection_id);
+                    if (!connection) {
+                        return false;
+                    }
+                    eqftp.domain.do(['ftp', 'ls'], {
+                        connection: connection,
+                        path: path || connection.remotepath
+                    }, function (result) {
+                        console.log(result);
+                    });
+                }
+            },
+            domain: {
+                do: function (path, params, callback) {
+                    params._id = eqftp.utils.uniq();
+                    if (callback) {
+                        eqftp.variables.callbacks[params._id] = callback;
+                    }
+                    _node.domains.eqFTP._do(path, params);
                 }
             },
             _password: {
@@ -1176,16 +1222,21 @@ define(function (require, exports, module) {
                         //var i = $('#eqftp-connections-list .eqftp-accordion-group').length - 1;
                         clone.find('*[name]').each(function () {
                             var name = $(this).attr('name');
-                            name = 'eqftpSettings' + name.replace(/{\$i}/gmi, i);
+                            name = 'eqftpSettings' + name.replace(/\{\$i\}/gmi, i);
                             $(this).attr('name', name);
                         });
                     }
-                }
+                },
+                callbacks: {}
             },
             _e: function (text, errtype, error) {
                 // prints error in log
-                console.error(text);
-                eqftp.utils.log('[ERROR] ' + text, 'error');
+                if (eqftp.utils.check.isString(text)) {
+                    var match = text.match(/^$(.*)/);
+                    if (match) {
+                        text = strings[match[1]];
+                    }
+                }
                 
                 if (errtype) {
                     var params = {
@@ -1197,8 +1248,26 @@ define(function (require, exports, module) {
                         params.title += 'FileUtils.writeText returning error';
                         if (eqftp.utils.check.isString(text)) {
                             params.body += text;
-                        } else if (eqftp.utils.check.isArray(text) || eqftp.utils.check.isObject(text)) {
+                        } else if (eqftp.utils.check.isArray(text) || (eqftp.utils.check.isObject(text) && !text.text)) {
                             params.body += JSON.stringify(text);
+                        } else if (eqftp.utils.check.isObject(text) && text.text) {
+                            params.body += text.text;
+                        }
+                        break;
+                    case 'connections':
+                        if (error.code) {
+                            params.title += 'Connection issues: ' + error.code;
+                            if (eqftp.utils.check.isString(text)) {
+                                params.body += text;
+                            } else if (eqftp.utils.check.isArray(text) || (eqftp.utils.check.isObject(text) && !text.text)) {
+                                params.body += JSON.stringify(text);
+                            } else if (eqftp.utils.check.isObject(text) && text.text) {
+                                params.body += text.text;
+                                if (text.params) {
+                                    _.unset(text.params, ['password', 'rsa', 'localpath', 'remotepath']);
+                                    params.body += "\n\nConnection's parameters:\n" + JSON.stringify(text.params) + "\n\nParameters password, rsa, localpath and remotepath are omitted";
+                                }
+                            }
                         }
                         break;
                     /*
@@ -1216,11 +1285,21 @@ define(function (require, exports, module) {
                     var link = 'https://github.com/Equals182/eqFTP/issues/new?' + params;
                     console.log('Please follow this link to create an issue: ' + link);
                 }
+                if (!eqftp.utils.check.isString(text)) {
+                    if (text.text) {
+                        text = text.text;
+                    } else {
+                        text = JSON.stringify(text);
+                    }
+                }
+                text += '. ' + strings['eqftp__connection__errors__' + error.code];
+                console.error(text);
+                eqftp.utils.log('[ERROR] ' + text, 'error');
             },
             _w: function (text) {
                 // prints error in log
                 console.warn(text);
-            },
+            }
         };
     
     AppInit.htmlReady(function () {
@@ -1245,7 +1324,7 @@ define(function (require, exports, module) {
         });
         $('body').on('keyup', '[eqftp-keyup]', function (e) {
             eqftp.utils.action($(this).attr('eqftp-keyup'), e);
-        });;
+        });
         $('body').on('input', '[eqftp-input]', function (e) {
             eqftp.utils.action($(this).attr('eqftp-input'), e);
         });
@@ -1303,10 +1382,52 @@ define(function (require, exports, module) {
                 eqftp._e(err);
             });
             loadPromise.done(function (done) {
-                _node.on("eqFTP:event", function(event, params) {
-                    console.log(event, params);
+                _node.on("eqFTP:event", function (event, params) {
+                    if (!params.action) {
+                        params.action = 'info';
+                    }
+                    switch (params.action) {
+                    case 'error':
+                        eqftp._e(params.text, params.errType);
+                        break;
+                    case 'info':
+                    case 'success':
+                        eqftp.utils.log(params.text, params.action);
+                        break;
+                    case 'do':
+                        eqftp.utils.do(params.path, params.params, null, params.returnIt);
+                        break;
+                    case 'debug':
+                        if (_eqFTPSettings.main.debug) {
+                            console.warn(params.info);
+                            console.warn(params.info_string);
+                        }
+                        break;
+                    case 'callback':
+                        if (eqftp.utils.check.isFunction(eqftp.variables.callbacks[params._id])) {
+                            eqftp.variables.callbacks[params._id](params.callback);
+                            _.unset(eqftp.variables.callbacks, params._id);
+                        }
+                        break;
+                    case 'connection':
+                        if (!params.id) {
+                            return false;
+                        }
+                        var connection = eqftp.connections._getByID(params.id);
+                        switch (params.status) {
+                        case 'close':
+                            eqftp.utils.log(strings.eqftp__connection__event__closed + connection.name);
+                            break;
+                        case 'open':
+                            eqftp.utils.log(strings.eqftp__connection__event__opened + connection.name);
+                            break;
+                        case 'error':
+                            eqftp._e({text: strings.eqftp__connection__event__error + connection.name, params: connection}, params.errType || {}, params.error || {});
+                            break;
+                        }
+                        break;
+                    }
                 });
-                _node.domains.eqFTP.do(['utils', 'event'], {what: "test", mindblow: true});
             });
             return loadPromise;
         }
