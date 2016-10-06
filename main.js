@@ -492,7 +492,7 @@ define(function (require, exports, module) {
                     },
                     isString: function (input) {
                         var getType = {};
-                        return input && getType.toString.call(input) === '[object String]';
+                        return getType.toString.call(input) === '[object String]';
                     },
                     isArray: function (input) {
                         return _.isArray(input);

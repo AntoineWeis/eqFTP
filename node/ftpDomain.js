@@ -28,11 +28,17 @@ maxerr: 50, node: true */
                     },
                     isString: function (input) {
                         var getType = {};
-                        return input && getType.toString.call(input) === '[object String]';
+                        return getType.toString.call(input) === '[object String]';
                     },
                     isArray: function (input) {
                         return _.isArray(input);
                     }
+                },
+                normalize: function (path) {
+                    if (eqftp.utils.check.isString(path)) {
+                        return path.replace(/\\+/g, '/').replace(/\/\/+/g, '/');
+                    }
+                    return path;
                 },
                 event: function (params) {
                     if (params.action) {
@@ -130,7 +136,23 @@ maxerr: 50, node: true */
                     }
                     
                     if (!c[params.connection_hash]) {
-                        eqftp.connection._open(params, callback);
+                        eqftp.connection._open(params, function(result) {
+                            if (result) {
+                                eqftp.ftp.pwd({
+                                    connection: params,
+                                    callback: function (result) {
+                                        if (result) {
+                                            c[params.connection_hash].start_dir = result;
+                                        }
+                                        if (eqftp.utils.check.isFunction(callback)) {
+                                            callback(result);
+                                        }
+                                    }
+                                });
+                            } else if (eqftp.utils.check.isFunction(callback)) {
+                                callback(result);
+                            }
+                        });
                     } else {
                         if (eqftp.utils.check.isFunction(callback)) {
                             callback(true);
@@ -145,43 +167,62 @@ maxerr: 50, node: true */
                     */
                     eqftp.connection.create(params.connection, _.once(function (result) {
                         if (!result) {
-                            eqftp.utils.event({
-                                action: 'callback',
-                                _id: params._id,
-                                callback: false
-                            });
+                            if (params._id) {
+                                eqftp.utils.event({
+                                    action: 'callback',
+                                    _id: params._id,
+                                    callback: false
+                                });
+                            } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
+                                params.callback(false);
+                            }
                             return false;
                         }
                         try {
+                            if (eqftp.utils.check.isString(params.path) && !params.path.match(/^\//)) {
+                                params.path = eqftp.utils.normalize(c[params.connection.connection_hash].start_dir + '/' + params.path);
+                            }
                             c[params.connection.connection_hash].server.cd(params.path, _.once(function (err) {
                                 if (err) {
                                     eqftp.utils.event({
                                         action: 'debug',
                                         info: err
                                     });
+                                    if (params._id) {
+                                        eqftp.utils.event({
+                                            action: 'callback',
+                                            _id: params._id,
+                                            callback: false
+                                        });
+                                    } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
+                                        params.callback(false);
+                                    }
+                                    return false;
+                                }
+                                if (params._id) {
                                     eqftp.utils.event({
                                         action: 'callback',
                                         _id: params._id,
-                                        callback: false
+                                        callback: true
                                     });
-                                    return false;
+                                } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
+                                    params.callback(true);
                                 }
-                                eqftp.utils.event({
-                                    action: 'callback',
-                                    _id: params._id,
-                                    callback: true
-                                });
                             }));
                         } catch (err) {
                             eqftp.utils.event({
                                 action: 'debug',
                                 info: err.message
                             });
-                            eqftp.utils.event({
-                                action: 'callback',
-                                _id: params._id,
-                                callback: false
-                            });
+                            if (params._id) {
+                                eqftp.utils.event({
+                                    action: 'callback',
+                                    _id: params._id,
+                                    callback: false
+                                });
+                            } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
+                                params.callback(false);
+                            }
                         }
                     }));
                 },
@@ -191,46 +232,134 @@ maxerr: 50, node: true */
                     */
                     eqftp.connection.create(params.connection, _.once(function (result) {
                         if (!result) {
-                            eqftp.utils.event({
-                                action: 'callback',
-                                _id: params._id,
-                                callback: false
-                            });
+                            if (params._id) {
+                                eqftp.utils.event({
+                                    action: 'callback',
+                                    _id: params._id,
+                                    callback: false
+                                });
+                            } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
+                                params.callback(false);
+                            }
                             return false;
                         }
                         try {
+                            if (eqftp.utils.check.isString(params.path) && !params.path.match(/^\//)) {
+                                params.path = eqftp.utils.normalize(c[params.connection.connection_hash].start_dir + '/' + params.path);
+                            }
+                            eqftp.utils.event({
+                                action: 'debug',
+                                info: [params.path]
+                            });
                             c[params.connection.connection_hash].server.ls(params.path, _.once(function (err, contents) {
                                 if (err) {
                                     eqftp.utils.event({
                                         action: 'debug',
                                         info: err
                                     });
+                                    if (params._id) {
+                                        eqftp.utils.event({
+                                            action: 'callback',
+                                            _id: params._id,
+                                            callback: false
+                                        });
+                                    } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
+                                        params.callback(false);
+                                    }
+                                    return false;
+                                }
+                                if (params._id) {
                                     eqftp.utils.event({
                                         action: 'callback',
                                         _id: params._id,
-                                        callback: false
+                                        callback: {
+                                            contents: contents,
+                                            params: params
+                                        }
                                     });
-                                    return false;
-                                }
-                                eqftp.utils.event({
-                                    action: 'callback',
-                                    _id: params._id,
-                                    callback: {
+                                } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
+                                    params.callback({
                                         contents: contents,
                                         params: params
-                                    }
-                                });
+                                    });
+                                }
                             }));
                         } catch (err) {
                             eqftp.utils.event({
                                 action: 'debug',
                                 info: err.message
                             });
+                            if (params._id) {
+                                eqftp.utils.event({
+                                    action: 'callback',
+                                    _id: params._id,
+                                    callback: false
+                                });
+                            } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
+                                params.callback(false);
+                            }
+                        }
+                    }));
+                },
+                pwd: function (params) {
+                    /*
+                    connection, path
+                    */
+                    eqftp.connection.create(params.connection, _.once(function (result) {
+                        if (!result) {
+                            if (params._id) {
+                                eqftp.utils.event({
+                                    action: 'callback',
+                                    _id: params._id,
+                                    callback: false
+                                });
+                            } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
+                                params.callback(false);
+                            }
+                            return false;
+                        }
+                        try {
+                            c[params.connection.connection_hash].server.pwd(_.once(function (err, contents) {
+                                if (err) {
+                                    eqftp.utils.event({
+                                        action: 'debug',
+                                        info: err
+                                    });
+                                    if (params._id) {
+                                        eqftp.utils.event({
+                                            action: 'callback',
+                                            _id: params._id,
+                                            callback: false
+                                        });
+                                    } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
+                                        params.callback(false);
+                                    }
+                                    return false;
+                                }
+                                if (params._id) {
+                                    eqftp.utils.event({
+                                        action: 'callback',
+                                        _id: params._id,
+                                        callback: contents
+                                    });
+                                } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
+                                    params.callback(contents);
+                                }
+                            }));
+                        } catch (err) {
                             eqftp.utils.event({
-                                action: 'callback',
-                                _id: params._id,
-                                callback: false
+                                action: 'debug',
+                                info: err.message
                             });
+                            if (params._id) {
+                                eqftp.utils.event({
+                                    action: 'callback',
+                                    _id: params._id,
+                                    callback: false
+                                });
+                            } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
+                                params.callback(false);
+                            }
                         }
                     }));
                 }
