@@ -132,11 +132,6 @@ maxerr: 50, node: true */
                     if (!c[params.connection_hash]) {
                         eqftp.connection._open(params, callback);
                     } else {
-                        eqftp.utils.event({
-                            action: 'connection',
-                            id: params.id,
-                            status: 'open'
-                        });
                         if (eqftp.utils.check.isFunction(callback)) {
                             callback(true);
                         }
@@ -220,7 +215,10 @@ maxerr: 50, node: true */
                                 eqftp.utils.event({
                                     action: 'callback',
                                     _id: params._id,
-                                    callback: contents
+                                    callback: {
+                                        contents: contents,
+                                        params: params
+                                    }
                                 });
                             }));
                         } catch (err) {
