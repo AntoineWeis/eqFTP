@@ -187,6 +187,9 @@
 .fa-trash:before {
   content: ""; }
 
+.fa-circle:before {
+  content: ""; }
+
 .eqftp-toolbar__icon {
   background-image: url(img/toolbar__icon.svg);
   background-size: contain; }
@@ -348,6 +351,51 @@
   .eqftp-panel input[type=text], .eqftp-panel input[type=password] {
     box-sizing: border-box;
     height: 30px; }
+.eqftp-file_tree {
+  padding: 10px 0;
+  overflow: auto;
+  max-height: calc(100% - 46px); }
+  .eqftp-file_tree-subfolder {
+    display: none; }
+  .eqftp-file_tree-element {
+    white-space: nowrap;
+    padding: 2px 10px;
+    height: 18px;
+    line-height: 18px; }
+    .eqftp-file_tree-element:hover {
+      background-color: rgba(0, 0, 0, 0.1); }
+    .eqftp-file_tree-element--d > .eqftp-file_tree-element--col_name {
+      padding-left: 0px; }
+      .eqftp-file_tree-element--d > .eqftp-file_tree-element--col_name > i {
+        font-size: 8px;
+        vertical-align: middle;
+        margin-top: -1px;
+        margin-right: 5px; }
+    .eqftp-file_tree-element--d.eqftp-opened {
+      height: auto; }
+      .eqftp-file_tree-element--d.eqftp-opened .eqftp-file_tree-subfolder {
+        display: block; }
+    .eqftp-file_tree-element--col {
+      display: inline-block;
+      height: 18px;
+      line-height: 18px; }
+      .eqftp-file_tree-element--col_name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 150px;
+        padding-left: 10px; }
+      .eqftp-file_tree-element--col_type {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 50px; }
+      .eqftp-file_tree-element--col_size {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 80px; }
+      .eqftp-file_tree-element--col_datemodified {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100px; }
 .eqftp-welcome_screen {
   position: absolute;
   z-index: 10;

@@ -44,12 +44,23 @@ define(function (require, exports, module) {
         tpl__panel__searchDropdown__outer = Mustache.render(require("text!htmlContent/panel__searchDropdown--outer.html"), strings),
         tpl__panel__searchDropdown__row = Mustache.render(require("text!htmlContent/panel__searchDropdown--row.html"), strings),
         
+        tpl__file_tree__element_folder = Mustache.render(require("text!htmlContent/file_tree--folder.html"), strings),
+        tpl__file_tree__element_file = Mustache.render(require("text!htmlContent/file_tree--file.html"), strings),
+        
         _defaultEqFTPFolder = brackets.app.getUserDocumentsDirectory(),
         _homeFolder = _defaultEqFTPFolder,
         _eqFTPSettings = {},
         _eqFTPPassword = false,
         _eqFTPCache = {
-            connection_contents: {}
+            connection_contents: {},
+            connection_info: {},
+            file_tree: {
+                sorting: {
+                    sort: 'alpabetical',
+                    direction: 'asc',
+                    all_sorts: ['alpabetical', 'size', 'date_modified']
+                }
+            }
         },
         _node,
         
@@ -339,7 +350,90 @@ define(function (require, exports, module) {
                             if (!params.connection_id || !_eqFTPCache.connection_contents[params.connection_id]) {
                                 return false;
                             }
-                            console.log(_eqFTPCache.connection_contents[params.connection_id]);
+                            if (!params.path) {
+                                var keys = Object.keys(_eqFTPCache.connection_contents[params.connection_id]);
+                                keys.sort(function(a, b) {
+                                    return a.length - b.length;
+                                });
+                                eqftp.ui.panel.file_tree._render_single({
+                                    contents: _eqFTPCache.connection_contents[params.connection_id][_eqFTPCache.connection_info[params.connection_id].start_path],
+                                    parent: $('.eqftp-file_tree'),
+                                    connection_id: params.connection_id
+                                });
+                                keys.forEach(function (e, i) {
+                                    if (e !== _eqFTPCache.connection_info[params.connection_id].start_path) {
+                                        if ($('[eqftp-tree_path="'+e+'"]').length === 1) {
+                                            eqftp.ui.panel.file_tree._render_single({
+                                                contents: _eqFTPCache.connection_contents[params.connection_id][e],
+                                                parent: $('[eqftp-tree_path="'+e+'"]').find('.eqftp-file_tree-subfolder'),
+                                                connection_id: params.connection_id
+                                            });
+                                        }
+                                    }
+                                });
+                            } else {
+                                if ($('[eqftp-tree_path="'+params.path+'"]').length === 1) {
+                                    eqftp.ui.panel.file_tree._render_single({
+                                        contents: _eqFTPCache.connection_contents[params.connection_id][params.path],
+                                        parent: $('[eqftp-tree_path="'+params.path+'"]').find('.eqftp-file_tree-subfolder'),
+                                        connection_id: params.connection_id
+                                    });
+                                }
+                            }
+                        },
+                        sorts: {
+                            alpabetical: function (a, b) {
+                                var nameA = a.filename.toLowerCase(),
+                                    nameB = b.filename.toLowerCase();
+                                //sort string ascending
+                                if (nameA < nameB) {
+                                    return -1;
+                                }
+                                if (nameA > nameB) {
+                                    return 1;
+                                }
+                                return 0; //default return value (no sorting)
+                            }
+                        },
+                        open_folder: function (params, e) {
+                            var t = $(e.target).closest('.eqftp-file_tree-element'),
+                                path = t.attr('eqftp-tree_path');
+                            eqftp.connections.ls(params.connection_id, path, 'single');
+                        },
+                        _render_single: function (params) {
+                            var html = {};
+                            if (params.contents && params.contents.contents && eqftp.utils.check.isArray(params.contents.contents)) {
+                                params.contents.contents.sort(eqftp.ui.panel.file_tree.sorts[_eqFTPCache.file_tree.sorting.sort]);
+                                if (_eqFTPCache.file_tree.sorting.direction === 'desc') {
+                                    params.contents.contents = _.reverse(params.contents.contents);
+                                }
+                                params.contents.contents.forEach(function (e, i) {
+                                    if (!html[e.type]) {
+                                        html[e.type] = '';
+                                    }
+                                    switch (e.type) {
+                                        case 'd':
+                                            html[e.type] += eqftp.utils.render(tpl__file_tree__element_folder, {
+                                                name: e.filename,
+                                                datemodified: e.date,
+                                                path: e.full_path,
+                                                connid: params.connection_id
+                                            }, 'element_');
+                                            break;
+                                        default:
+                                            html[e.type] += eqftp.utils.render(tpl__file_tree__element_file, {
+                                                name: e.filename,
+                                                datemodified: e.date,
+                                                path: e.full_path,
+                                                size: e.size,
+                                                connid: params.connection_id
+                                            }, 'element_');
+                                            break;
+                                    }
+                                });
+                            }
+                            params.parent.closest('.eqftp-file_tree-element').addClass('eqftp-opened');
+                            params.parent.html((html.d || '') + (html.f || ''));
                         }
                     }
                 },
@@ -496,6 +590,9 @@ define(function (require, exports, module) {
                     },
                     isArray: function (input) {
                         return _.isArray(input);
+                    },
+                    isNumeric: function (input) {
+                        return _.isNumber(input) && !isNaN(input);
                     }
                 },
                 resize: {
@@ -603,24 +700,22 @@ define(function (require, exports, module) {
                 // replaces placeholders with given paremeters
                 render: function (tpl, params, prefix) {
                     if (eqftp.utils.check.isString(tpl) && eqftp.utils.check.isObject(params)) {
-                        var key;
                         if (!prefix) {
                             prefix = '';
                         }
-                        for (key in params) {
-                            if (params.hasOwnProperty(key)) {
-                                var o = params[key];
-                                if (eqftp.utils.check.isObject(o)) {
-                                    tpl = eqftp.utils.render(tpl, o, prefix + key + '.');
-                                } else if (eqftp.utils.check.isString(o)) {
-                                    var str = eqftp.utils.escape('[[' + prefix + key + ']]'),
-                                        r = new RegExp(str, 'g');
-                                    tpl = tpl.replace(r, o);
-                                } else {
-                                    return tpl;
+                        _.forOwn(params, function (e, i) {
+                            if (eqftp.utils.check.isObject(e)) {
+                                tpl = eqftp.utils.render(tpl, e, prefix + i + '.');
+                            } else {
+                                if (!eqftp.utils.check.isString(e) && !eqftp.utils.check.isNumeric(e)) {
+                                    e = '';
                                 }
+                                var str = eqftp.utils.escape('[[' + prefix + i + ']]'),
+                                    r = new RegExp(str, 'g');
+                                tpl = tpl.replace(r, e);
+                                return tpl;
                             }
-                        }
+                        });
                     }
                     return tpl;
                 },
@@ -811,9 +906,12 @@ define(function (require, exports, module) {
                         console.log(result);
                     });
                 },
-                ls: function (connection_id, path, dont_render) {
+                ls: function (connection_id, path, render_mode) {
                     if (!connection_id) {
                         return false;
+                    }
+                    if (!render_mode) {
+                        render_mode = 'all';
                     }
                     var connection = eqftp.connections._getByID(connection_id);
                     if (!connection) {
@@ -824,22 +922,40 @@ define(function (require, exports, module) {
                         path: path || connection.remotepath
                     }, function (result) {
                         if (result) {
+                            if (!_eqFTPCache.connection_info[result.params.connection.id]) {
+                                _eqFTPCache.connection_info[result.params.connection.id] = {};
+                            }
+                            if (!_eqFTPCache.connection_info[result.params.connection.id].start_path) {
+                                _eqFTPCache.connection_info[result.params.connection.id].start_path = connection.remotepath;
+                                if (!_eqFTPCache.connection_info[result.params.connection.id].start_path.match(/^\//)) {
+                                    _eqFTPCache.connection_info[result.params.connection.id].start_path = result.params.start_path + '/' + _eqFTPCache.connection_info[result.params.connection.id].start_path;
+                                }
+                                _eqFTPCache.connection_info[result.params.connection.id].start_path = eqftp.utils.normalize(_eqFTPCache.connection_info[result.params.connection.id].start_path + '/');
+                            }
                             if (!_eqFTPCache.connection_contents[result.params.connection.id]) {
                                 _eqFTPCache.connection_contents[result.params.connection.id] = {};
                             }
                             if (eqftp.utils.check.isArray(result.contents)) {
-                                if (!dont_render) {
-                                    _eqFTPCache.connection_contents[result.params.connection.id][result.params.path] = {
-                                        status: "opened",
-                                        contents: []
-                                    };
-                                    result.contents.forEach(function(v, i) {
-                                        v.full_path = eqftp.utils.normalize(result.params.path + '/' + v.name);
-                                        _eqFTPCache.connection_contents[result.params.connection.id][result.params.path].contents.push(v);
-                                    });
-                                    eqftp.ui.panel.file_tree.render({
-                                        connection_id: result.params.connection.id
-                                    });
+                                _eqFTPCache.connection_contents[result.params.connection.id][result.params.path] = {
+                                    status: "opened",
+                                    contents: []
+                                };
+                                result.contents.forEach(function(v, i) {
+                                    v.full_path = eqftp.utils.normalize(result.params.path + '/' + v.name);
+                                    _eqFTPCache.connection_contents[result.params.connection.id][result.params.path].contents.push(v);
+                                });
+                                switch (render_mode) {
+                                    case 'all':
+                                        eqftp.ui.panel.file_tree.render({
+                                            connection_id: result.params.connection.id
+                                        });
+                                        break;
+                                    case 'single':
+                                        eqftp.ui.panel.file_tree.render({
+                                            connection_id: result.params.connection.id,
+                                            path: result.params.path
+                                        });
+                                        break;
                                 }
                             }
                         }
@@ -1341,6 +1457,10 @@ define(function (require, exports, module) {
         $('body').on('click', '[eqftp-click]', function (e) {
             e.preventDefault();
             eqftp.utils.action($(this).attr('eqftp-click'), e);
+        });
+        $('body').on('dblclick', '[eqftp-dblclick]', function (e) {
+            e.preventDefault();
+            eqftp.utils.action($(this).attr('eqftp-dblclick'), e);
         });
         $('body').on('change', '[eqftp-change]', function (e) {
             e.preventDefault();

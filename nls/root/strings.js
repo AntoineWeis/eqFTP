@@ -112,6 +112,10 @@ define({
     "eqftp__connection__errors__ETIMEDOUT" : "A connect or send request failed because the connected party did not properly respond after a period of time. ",
     
     
+    "eqftp__file_tree__type_directory" : "folder",
+    "eqftp__file_tree__type_file" : "file",
+    
+    
     "eqftp__password_label" : "Password for settings",
     "eqftp__password_placeholder" : "Enter your password",
     

@@ -142,7 +142,7 @@ maxerr: 50, node: true */
                                     connection: params,
                                     callback: function (result) {
                                         if (result) {
-                                            c[params.connection_hash].start_dir = result;
+                                            c[params.connection_hash].start_path = result;
                                         }
                                         if (eqftp.utils.check.isFunction(callback)) {
                                             callback(result);
@@ -180,8 +180,9 @@ maxerr: 50, node: true */
                         }
                         try {
                             if (eqftp.utils.check.isString(params.path) && !params.path.match(/^\//)) {
-                                params.path = eqftp.utils.normalize(c[params.connection.connection_hash].start_dir + '/' + params.path);
+                                params.path = eqftp.utils.normalize(c[params.connection.connection_hash].start_path + '/' + params.path);
                             }
+                            params.start_path = c[params.connection.connection_hash].start_path;
                             c[params.connection.connection_hash].server.cd(params.path, _.once(function (err) {
                                 if (err) {
                                     eqftp.utils.event({
@@ -245,8 +246,9 @@ maxerr: 50, node: true */
                         }
                         try {
                             if (eqftp.utils.check.isString(params.path) && !params.path.match(/^\//)) {
-                                params.path = eqftp.utils.normalize(c[params.connection.connection_hash].start_dir + '/' + params.path);
+                                params.path = eqftp.utils.normalize(c[params.connection.connection_hash].start_path + '/' + params.path);
                             }
+                            params.start_path = c[params.connection.connection_hash].start_path;
                             eqftp.utils.event({
                                 action: 'debug',
                                 info: [params.path]

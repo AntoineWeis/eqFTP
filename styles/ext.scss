@@ -208,6 +208,71 @@
             height: 30px;
         }
     }
+    &-file_tree {
+        padding: 10px 0;
+        overflow: auto;
+        max-height: calc(100% - 46px);
+        &-subfolder {
+            display: none;
+        }
+        &-element {
+            white-space: nowrap;
+            padding: 2px 10px;
+            height: 18px;
+            line-height: 18px;
+            &:hover {
+                background-color: rgba(0,0,0,0.1);
+            }
+            &--d {
+                & > .eqftp-file_tree-element--col {
+                    &_name {
+                        padding-left: 0px;
+                        & > i {
+                            font-size: 8px;
+                            vertical-align: middle;
+                            margin-top: -1px;
+                            margin-right: 5px;
+                        }
+                    }
+                }
+                &.eqftp-opened {
+                    height: auto;
+                    & .eqftp-file_tree-subfolder {
+                        display: block;
+                    }
+                }
+            }
+            &--f {
+                
+            }
+            &--col {
+                display: inline-block;
+                height: 18px;
+                line-height: 18px;
+                &_name {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    width: 150px;
+                    padding-left: 10px;
+                }
+                &_type {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    width: 50px;
+                }
+                &_size {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    width: 80px;
+                }
+                &_datemodified {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    width: 100px;
+                }
+            }
+        }
+    }
     
     &-welcome_screen {
         position: absolute;
