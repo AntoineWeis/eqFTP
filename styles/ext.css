@@ -351,6 +351,24 @@
   .eqftp-panel input[type=text], .eqftp-panel input[type=password] {
     box-sizing: border-box;
     height: 30px; }
+.eqftp-fixed_folder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 2px 0;
+  background-color: #47484B;
+  display: block;
+  z-index: 2;
+  box-shadow: 0 3px 5px -2px rgba(0, 0, 0, 0.4); }
+  .eqftp-fixed_folder > .eqftp-file_tree-element_data {
+    height: 18px;
+    transition: all 0.2s; }
+    .eqftp-fixed_folder > .eqftp-file_tree-element_data .eqftp-file_tree-element--col_name > i {
+      color: #81B965;
+      font-size: 8px;
+      vertical-align: middle;
+      margin-top: -1px;
+      margin-right: 5px; }
 .eqftp-file_tree {
   padding: 10px 0;
   overflow: auto;
@@ -359,31 +377,47 @@
     display: none; }
   .eqftp-file_tree-element {
     white-space: nowrap;
-    padding: 2px 10px;
+    padding: 2px 0;
     height: 18px;
-    line-height: 18px; }
+    line-height: 18px;
+    position: relative; }
     .eqftp-file_tree-element:hover {
-      background-color: rgba(0, 0, 0, 0.1); }
-    .eqftp-file_tree-element--d > .eqftp-file_tree-element--col_name {
-      padding-left: 0px; }
-      .eqftp-file_tree-element--d > .eqftp-file_tree-element--col_name > i {
-        font-size: 8px;
-        vertical-align: middle;
-        margin-top: -1px;
-        margin-right: 5px; }
+      background-color: rgba(255, 255, 255, 0.1); }
+    .eqftp-file_tree-element_data {
+      position: relative;
+      white-space: nowrap; }
+    .eqftp-file_tree-element--d > .eqftp-file_tree-element_data > .eqftp-file_tree-element--col_name > i {
+      font-size: 8px;
+      vertical-align: middle;
+      margin-top: -1px;
+      margin-right: 5px;
+      transform: translateY(0px);
+      transition: all 0.2s; }
+    .eqftp-file_tree-element--d.eqftp-loading > .eqftp-file_tree-element_data > .eqftp-file_tree-element--col_name > i {
+      animation: eqftp-bounce 0.9s infinite ease-in-out; }
     .eqftp-file_tree-element--d.eqftp-opened {
       height: auto; }
-      .eqftp-file_tree-element--d.eqftp-opened .eqftp-file_tree-subfolder {
-        display: block; }
+      .eqftp-file_tree-element--d.eqftp-opened > .eqftp-file_tree-element_data > .eqftp-file_tree-element--col_name > i {
+        color: #81B965; }
+      .eqftp-file_tree-element--d.eqftp-opened > .eqftp-file_tree-subfolder {
+        display: block;
+        position: relative;
+        z-index: 1;
+        margin-left: 8px;
+        border-left: 1px solid rgba(0, 0, 0, 0.1); }
+        .eqftp-file_tree-element--d.eqftp-opened > .eqftp-file_tree-subfolder .eqftp-file_tree-element {
+          padding-left: 6px; }
     .eqftp-file_tree-element--col {
       display: inline-block;
+      position: relative;
+      z-index: 1;
       height: 18px;
-      line-height: 18px; }
+      line-height: 18px;
+      padding: 0 5px; }
       .eqftp-file_tree-element--col_name {
         overflow: hidden;
         text-overflow: ellipsis;
-        width: 150px;
-        padding-left: 10px; }
+        width: 150px; }
       .eqftp-file_tree-element--col_type {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -583,6 +617,13 @@
 .eqftp-ftp .eqftp-ftp_only {
   display: block; }
 
+@keyframes eqftp-bounce {
+  0%, 100% {
+    transform: translateY(0px);
+    -webkit-transform: translateY(0px); }
+  50% {
+    transform: translateY(-5px);
+    -webkit-transform: translateY(-5px); } }
 .dark .eqftp-panel {
   background-color: #47484b; }
   .dark .eqftp-panel__header {
@@ -654,6 +695,10 @@
   .dark .eqftp-accordion-body {
     background-color: #3C3F41;
     box-shadow: 0 10px 10px -10px rgba(0, 0, 0, 0.6) inset, 0 -10px 10px -10px rgba(0, 0, 0, 0.6) inset; }
+.dark .eqftp-file_tree-element:hover {
+  background-color: rgba(0, 0, 0, 0.1); }
+.dark .eqftp-file_tree-element--d.eqftp-opened .eqftp-file_tree-subfolder {
+  border-left: 1px solid rgba(255, 255, 255, 0.1); }
 .dark .eqftp-secondary_link {
   color: #838383; }
 

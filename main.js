@@ -350,6 +350,11 @@ define(function (require, exports, module) {
                             if (!params.connection_id || !_eqFTPCache.connection_contents[params.connection_id]) {
                                 return false;
                             }
+                            if (!$('.eqftp-file_tree')[0].onscroll) {
+                                $('.eqftp-file_tree')[0].onscroll = function() {
+                                    eqftp.ui.panel.file_tree._fix_opened(false, {target: $('.eqftp-file_tree')});
+                                };
+                            }
                             if (!params.path) {
                                 var keys = Object.keys(_eqFTPCache.connection_contents[params.connection_id]);
                                 keys.sort(function(a, b) {
@@ -365,7 +370,7 @@ define(function (require, exports, module) {
                                         if ($('[eqftp-tree_path="'+e+'"]').length === 1) {
                                             eqftp.ui.panel.file_tree._render_single({
                                                 contents: _eqFTPCache.connection_contents[params.connection_id][e],
-                                                parent: $('[eqftp-tree_path="'+e+'"]').find('.eqftp-file_tree-subfolder'),
+                                                parent: $('[eqftp-tree_path="'+e+'"]').closest('.eqftp-file_tree-element').find('.eqftp-file_tree-subfolder:first'),
                                                 connection_id: params.connection_id
                                             });
                                         }
@@ -375,7 +380,7 @@ define(function (require, exports, module) {
                                 if ($('[eqftp-tree_path="'+params.path+'"]').length === 1) {
                                     eqftp.ui.panel.file_tree._render_single({
                                         contents: _eqFTPCache.connection_contents[params.connection_id][params.path],
-                                        parent: $('[eqftp-tree_path="'+params.path+'"]').find('.eqftp-file_tree-subfolder'),
+                                        parent: $('[eqftp-tree_path="'+params.path+'"]').closest('.eqftp-file_tree-element').find('.eqftp-file_tree-subfolder:first'),
                                         connection_id: params.connection_id
                                     });
                                 }
@@ -397,8 +402,51 @@ define(function (require, exports, module) {
                         },
                         open_folder: function (params, e) {
                             var t = $(e.target).closest('.eqftp-file_tree-element'),
-                                path = t.attr('eqftp-tree_path');
-                            eqftp.connections.ls(params.connection_id, path, 'single');
+                                path = t.find('[eqftp-tree_path]:first').attr('eqftp-tree_path');
+                            $(t).addClass('eqftp-loading');
+                            if (_eqFTPCache.connection_contents[params.connection_id] && _eqFTPCache.connection_contents[params.connection_id][path]) {
+                                if (_eqFTPCache.connection_contents[params.connection_id][path].status === 'opened') {
+                                    _eqFTPCache.connection_contents[params.connection_id][path].status = 'closed';
+                                    $(t).removeClass('eqftp-opened');
+                                    $(t).removeClass('eqftp-loading');
+                                } else {
+                                    _eqFTPCache.connection_contents[params.connection_id][path].status = 'opened';
+                                    $(t).addClass('eqftp-opened');
+                                    $(t).removeClass('eqftp-loading');
+                                }
+                            } else {
+                                eqftp.connections.ls(params.connection_id, path, 'single');
+                            }
+                        },
+                        _fix_opened: function (params, e) {
+                            _.delay(function () {
+                                var ft = $(e.target).closest('.eqftp-file_tree'),
+                                    bl = ft.offset().top,
+                                    ds = [];
+                                ft.find('.eqftp-opened').each(function () {
+                                    var t = $(this),
+                                        d = t.offset().top - bl,
+                                        db = d + t.outerHeight();
+                                    if (d < 0 && db > 0) {
+                                        ds.push({
+                                            d: d,
+                                            t: t
+                                        })
+                                    }
+                                });
+                                if (ds.length > 0) {
+                                    ds.sort(function (a, b) {
+                                        return b.d - a.d;
+                                    });
+                                    var ed = $(ds[0].t).children('.eqftp-file_tree-element_data'),
+                                        pl = $(ed).children('.eqftp-file_tree-element--col_name').offset().left - ft.offset().left,
+                                        c = $(ds[0].t).children('.eqftp-file_tree-element_data').clone(true);
+                                    c.css('padding-left', pl + 'px');
+                                    $('.eqftp-fixed_folder').html(c);
+                                } else {
+                                    $('.eqftp-fixed_folder').html('');
+                                }
+                            }, 10);
                         },
                         _render_single: function (params) {
                             var html = {};
@@ -432,7 +480,7 @@ define(function (require, exports, module) {
                                     }
                                 });
                             }
-                            params.parent.closest('.eqftp-file_tree-element').addClass('eqftp-opened');
+                            params.parent.closest('.eqftp-file_tree-element').addClass('eqftp-opened').removeClass('eqftp-loading');
                             params.parent.html((html.d || '') + (html.f || ''));
                         }
                     }
@@ -1455,30 +1503,45 @@ define(function (require, exports, module) {
         $("#main-toolbar .buttons").append(tpl__toolbar);
         
         $('body').on('click', '[eqftp-click]', function (e) {
+            var params = $(this).attr('eqftp-click');
             e.preventDefault();
-            eqftp.utils.action($(this).attr('eqftp-click'), e);
+            eqftp.utils.action(params, e);
         });
         $('body').on('dblclick', '[eqftp-dblclick]', function (e) {
+            var params = $(this).attr('eqftp-dblclick');
             e.preventDefault();
-            eqftp.utils.action($(this).attr('eqftp-dblclick'), e);
+            eqftp.utils.action(params, e);
+        });
+        $('body').on('mousewheel', '[eqftp-mousewheel]', function (e) {
+            var params = $(this).attr('eqftp-mousewheel');
+            eqftp.utils.action(params, e);
+        });
+        $('body').on('scroll', '[eqftp-scroll]', function (e) {
+            var params = $(this).attr('eqftp-scroll');
+            eqftp.utils.action(params, e);
         });
         $('body').on('change', '[eqftp-change]', function (e) {
+            var params = $(this).attr('eqftp-change');
             e.preventDefault();
-            eqftp.utils.action($(this).attr('eqftp-change'), e);
+            eqftp.utils.action(params, e);
         });
         $('body').on('mouseenter', '[eqftp-mouseenter]', function (e) {
+            var params = $(this).attr('eqftp-mouseenter');
             e.preventDefault();
-            eqftp.utils.action($(this).attr('eqftp-mouseenter'), e);
+            eqftp.utils.action(params, e);
         });
         $('body').on('mouseleave', '[eqftp-mouseleave]', function (e) {
+            var params = $(this).attr('eqftp-mouseleave');
             e.preventDefault();
-            eqftp.utils.action($(this).attr('eqftp-mouseleave'), e);
+            eqftp.utils.action(params, e);
         });
         $('body').on('keyup', '[eqftp-keyup]', function (e) {
-            eqftp.utils.action($(this).attr('eqftp-keyup'), e);
+            var params = $(this).attr('eqftp-keyup');
+            eqftp.utils.action(params, e);
         });
         $('body').on('input', '[eqftp-input]', function (e) {
-            eqftp.utils.action($(this).attr('eqftp-input'), e);
+            var params = $(this).attr('eqftp-input');
+            eqftp.utils.action(params, e);
         });
         $('body').on('click', function (e) {
             var t = e.target,
