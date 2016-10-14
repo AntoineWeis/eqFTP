@@ -144,5 +144,15 @@ define({
     "eqftp__log__settings__save_error" : "Cannot save settings",
     "eqftp__log__settings__load_success" : "Settings loaded",
     
+    "eqftp__filesize_bytes" : "bytes",
+    "eqftp__filesize_kilobytes" : "kb",
+    "eqftp__filesize_megabytes" : "mb",
+    "eqftp__filesize_gigabytes" : "gb",
+    "eqftp__filesize_terabytes" : "tb",
+    "eqftp__filesize_petabytes" : "pt",
+    "eqftp__filesize_exabytes" : "eb",
+    "eqftp__filesize_zettabytes" : "zb",
+    "eqftp__filesize_yottabytes" : "yb",
+    
     "eqftp_dummy" : "dummy" // Not used anywhere, just leave it.
 });

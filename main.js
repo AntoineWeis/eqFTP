@@ -463,17 +463,21 @@ define(function (require, exports, module) {
                                         case 'd':
                                             html[e.type] += eqftp.utils.render(tpl__file_tree__element_folder, {
                                                 name: e.filename,
-                                                datemodified: e.date,
+                                                datemodified: dateFormat(_eqFTPSettings.main.date_format, new Date(e.date)),
+                                                datemodified_o: e.date,
                                                 path: e.full_path,
                                                 connid: params.connection_id
                                             }, 'element_');
                                             break;
                                         default:
+                                            var ext = eqftp.utils.extract_extension(e.filename);
                                             html[e.type] += eqftp.utils.render(tpl__file_tree__element_file, {
                                                 name: e.filename,
-                                                datemodified: e.date,
+                                                extension: (ext ? 'ext-' + ext : ''),
+                                                datemodified: dateFormat(_eqFTPSettings.main.date_format, new Date(e.date)),
+                                                datemodified_o: e.date,
                                                 path: e.full_path,
-                                                size: e.size,
+                                                size: eqftp.utils.humanize_filesize(e.size),
                                                 connid: params.connection_id
                                             }, 'element_');
                                             break;
@@ -899,6 +903,37 @@ define(function (require, exports, module) {
                 },
                 md5: function (value) {
                     return CryptoJS.MD5(value).toString();
+                },
+                humanize_filesize: function (value, decimals) {
+                    if (!decimals) {
+                        decimals = 1;
+                    }
+                    if (value == 0) { return '0 ' + strings.eqftp__filesize_bytes; }
+                    var k = 1000, // or 1024 for binary
+                        dm = decimals + 1 || 3,
+                        sizes = [
+                            strings.eqftp__filesize_bytes,
+                            strings.eqftp__filesize_kilobytes,
+                            strings.eqftp__filesize_megabytes,
+                            strings.eqftp__filesize_gigabytes,
+                            strings.eqftp__filesize_terabytes,
+                            strings.eqftp__filesize_petabytes,
+                            strings.eqftp__filesize_exabytes,
+                            strings.eqftp__filesize_zettabytes,
+                            strings.eqftp__filesize_yottabytes
+                        ],
+                        i = Math.floor(Math.log(value) / Math.log(k));
+                    return parseFloat((value / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+                },
+                extract_extension: function (filename) {
+                    if (!eqftp.utils.check.isString(filename)) {
+                        return false;
+                    }
+                    var m = filename.match(/.+\.(.*?)$/);
+                    if (!m) {
+                        return false;
+                    }
+                    return m[1];
                 },
                 log: function (text, type) {
                     if (!text) {

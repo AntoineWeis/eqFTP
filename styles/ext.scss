@@ -224,12 +224,15 @@
             transition: all 0.2s;
             padding: 0;
             width: 100%;
-            & > i.fa.fa-circle {
+            & i.fa.fa-circle {
                 color: #81B965;
                 font-size: 8px;
                 vertical-align: middle;
                 margin-top: -1px;
                 margin-right: 5px;
+            }
+            & .eqftp-file_tree-element_col-date {
+                display: none;
             }
         }
     }
@@ -255,11 +258,10 @@
                 border-left: 1px solid rgba(0,0,0,0.1);
                 box-sizing: border-box;
                 width: 100%;
-                padding: 0 0 0 8px;
+                padding: 0 0 0 6px;
             }
         }
         &-element {
-            padding: 2px 0;
             height: 18px;
             line-height: 18px;
             position: relative;
@@ -272,13 +274,14 @@
                 opacity: 0.4;
             }
             &_data {
+                padding: 2px 0;
                 position: relative;
                 overflow: hidden;
                 width: 100%;
                 white-space: nowrap;
                 padding: 0px 5px;
                 box-sizing: border-box;
-                & > i.fa.fa-circle {
+                & i.fa.fa-circle {
                     font-size: 8px;
                     vertical-align: middle;
                     margin-top: -1px;
@@ -287,9 +290,22 @@
                     transition: all 0.2s;
                 }
             }
+            &_col {
+                float: left;
+                box-sizing: border-box;
+                &-name {
+                    width: 60%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                &-date {
+                    width: 40%;
+                }
+            }
             &.eqftp-loading {
                 & .eqftp-file_tree-element_data {
-                    & > i.fa.fa-circle {
+                    & i.fa.fa-circle {
                         animation: eqftp-bounce 0.9s infinite ease-in-out;
                     }
                 }
@@ -297,7 +313,7 @@
             &.eqftp-opened {
                 height: auto;
                 & > .eqftp-file_tree-element_data {
-                    & > i.fa.fa-circle {
+                    & i.fa.fa-circle {
                         color: #81B965;
                     }
                 }

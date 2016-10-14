@@ -367,12 +367,14 @@
     transition: all 0.2s;
     padding: 0;
     width: 100%; }
-    .eqftp-fixed_folder > .eqftp-file_tree-element_data > i.fa.fa-circle {
+    .eqftp-fixed_folder > .eqftp-file_tree-element_data i.fa.fa-circle {
       color: #81B965;
       font-size: 8px;
       vertical-align: middle;
       margin-top: -1px;
       margin-right: 5px; }
+    .eqftp-fixed_folder > .eqftp-file_tree-element_data .eqftp-file_tree-element_col-date {
+      display: none; }
 .eqftp-file_tree {
   margin: 0;
   list-style: none;
@@ -394,9 +396,8 @@
       border-left: 1px solid rgba(0, 0, 0, 0.1);
       box-sizing: border-box;
       width: 100%;
-      padding: 0 0 0 8px; }
+      padding: 0 0 0 6px; }
   .eqftp-file_tree-element {
-    padding: 2px 0;
     height: 18px;
     line-height: 18px;
     position: relative;
@@ -407,24 +408,35 @@
     .eqftp-file_tree-element_size {
       opacity: 0.4; }
     .eqftp-file_tree-element_data {
+      padding: 2px 0;
       position: relative;
       overflow: hidden;
       width: 100%;
       white-space: nowrap;
       padding: 0px 5px;
       box-sizing: border-box; }
-      .eqftp-file_tree-element_data > i.fa.fa-circle {
+      .eqftp-file_tree-element_data i.fa.fa-circle {
         font-size: 8px;
         vertical-align: middle;
         margin-top: -1px;
         margin-right: 5px;
         transform: translateY(0px);
         transition: all 0.2s; }
-    .eqftp-file_tree-element.eqftp-loading .eqftp-file_tree-element_data > i.fa.fa-circle {
+    .eqftp-file_tree-element_col {
+      float: left;
+      box-sizing: border-box; }
+      .eqftp-file_tree-element_col-name {
+        width: 60%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; }
+      .eqftp-file_tree-element_col-date {
+        width: 40%; }
+    .eqftp-file_tree-element.eqftp-loading .eqftp-file_tree-element_data i.fa.fa-circle {
       animation: eqftp-bounce 0.9s infinite ease-in-out; }
     .eqftp-file_tree-element.eqftp-opened {
       height: auto; }
-      .eqftp-file_tree-element.eqftp-opened > .eqftp-file_tree-element_data > i.fa.fa-circle {
+      .eqftp-file_tree-element.eqftp-opened > .eqftp-file_tree-element_data i.fa.fa-circle {
         color: #81B965; }
       .eqftp-file_tree-element.eqftp-opened > .eqftp-file_tree-subfolder {
         display: block; }
