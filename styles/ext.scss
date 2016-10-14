@@ -212,115 +212,97 @@
         position: absolute;
         top: 0;
         left: 0;
-        padding: 2px 0;
+        right: 0;
+        padding: 2px 0 2px 5px;
         background-color: #47484B;
         display: block;
         z-index: 2;
         box-shadow: 0 3px 5px -2px rgba(0,0,0,0.4);
+        box-sizing: border-box;
         & > .eqftp-file_tree-element_data {
             height: 18px;
             transition: all 0.2s;
-            & .eqftp-file_tree-element--col_name {
-                & > i {
-                    color: #81B965;
-                    font-size: 8px;
-                    vertical-align: middle;
-                    margin-top: -1px;
-                    margin-right: 5px;
-                }
+            padding: 0;
+            width: 100%;
+            & > i.fa.fa-circle {
+                color: #81B965;
+                font-size: 8px;
+                vertical-align: middle;
+                margin-top: -1px;
+                margin-right: 5px;
             }
         }
     }
     &-file_tree {
-        padding: 10px 0;
-        overflow: auto;
-        max-height: calc(100% - 46px);
+        margin: 0;
+        list-style: none;
+        width: 420px;
+        &--holder {
+            padding: 10px 0;
+            overflow: auto;
+            height: calc(100% - 46px);
+        }
         &-subfolder {
             display: none;
+            position: relative;
+            list-style: none;
+            margin: 0;
+            z-index: 1;
+            padding: 0 0 0 8px;
+            box-sizing: border-box;
+            width: 100%;
+            & .eqftp-file_tree-element {
+                border-left: 1px solid rgba(0,0,0,0.1);
+                box-sizing: border-box;
+                width: 100%;
+                padding: 0 0 0 8px;
+            }
         }
         &-element {
-            white-space: nowrap;
             padding: 2px 0;
             height: 18px;
             line-height: 18px;
             position: relative;
+            width: 100%;
+            box-sizing: border-box;
             &:hover {
                 background-color: rgba(255,255,255,0.1);
             }
+            &_size {
+                opacity: 0.4;
+            }
             &_data {
                 position: relative;
+                overflow: hidden;
+                width: 100%;
                 white-space: nowrap;
+                padding: 0px 5px;
+                box-sizing: border-box;
+                & > i.fa.fa-circle {
+                    font-size: 8px;
+                    vertical-align: middle;
+                    margin-top: -1px;
+                    margin-right: 5px;
+                    transform: translateY(0px);
+                    transition: all 0.2s;
+                }
             }
-            &--d {
+            &.eqftp-loading {
+                & .eqftp-file_tree-element_data {
+                    & > i.fa.fa-circle {
+                        animation: eqftp-bounce 0.9s infinite ease-in-out;
+                    }
+                }
+            }
+            &.eqftp-opened {
+                height: auto;
                 & > .eqftp-file_tree-element_data {
-                    & > .eqftp-file_tree-element--col {
-                        &_name {
-                            & > i {
-                                font-size: 8px;
-                                vertical-align: middle;
-                                margin-top: -1px;
-                                margin-right: 5px;
-                                transform: translateY(0px);
-                                transition: all 0.2s;
-                            }
-                        }
+                    & > i.fa.fa-circle {
+                        color: #81B965;
                     }
                 }
-                &.eqftp-loading {
-                    & > .eqftp-file_tree-element_data > .eqftp-file_tree-element--col_name {
-                        & > i {
-                            animation: eqftp-bounce 0.9s infinite ease-in-out;
-                        }
-                    }
-                }
-                &.eqftp-opened {
-                    height: auto;
-                    & > .eqftp-file_tree-element_data > .eqftp-file_tree-element--col_name {
-                        & > i {
-                            color: #81B965;
-                        }
-                    }
-                    & > .eqftp-file_tree-subfolder {
-                        display: block;
-                        position: relative;
-                        z-index: 1;
-                        margin-left: 8px;
-                        border-left: 1px solid rgba(0,0,0,0.1);
-                        & .eqftp-file_tree-element {
-                            padding-left: 6px;
-                        }
-                    }
-                }
-            }
-            &--f {
-
-            }
-            &--col {
-                display: inline-block;
-                position: relative;
-                z-index: 1;
-                height: 18px;
-                line-height: 18px;
-                padding: 0 5px;
-                &_name {
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    width: 150px;
-                }
-                &_type {
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    width: 50px;
-                }
-                &_size {
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    width: 80px;
-                }
-                &_datemodified {
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    width: 100px;
+                & > .eqftp-file_tree-subfolder {
+                    display: block;
                 }
             }
         }
@@ -754,9 +736,9 @@
                 &:hover {
                     background-color: rgba(0,0,0,0.1);
                 }
-                &--d {
-                    &.eqftp-opened {
-                        & .eqftp-file_tree-subfolder {
+                &.eqftp-opened {
+                    & .eqftp-file_tree-subfolder {
+                        & .eqftp-file_tree-element {
                             border-left: 1px solid rgba(255,255,255,0.1);
                         }
                     }

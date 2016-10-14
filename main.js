@@ -350,9 +350,9 @@ define(function (require, exports, module) {
                             if (!params.connection_id || !_eqFTPCache.connection_contents[params.connection_id]) {
                                 return false;
                             }
-                            if (!$('.eqftp-file_tree')[0].onscroll) {
-                                $('.eqftp-file_tree')[0].onscroll = function() {
-                                    eqftp.ui.panel.file_tree._fix_opened(false, {target: $('.eqftp-file_tree')});
+                            if (!$('.eqftp-file_tree--holder')[0].onscroll) {
+                                $('.eqftp-file_tree--holder')[0].onscroll = function() {
+                                    eqftp.ui.panel.file_tree._fix_opened(false, {target: $('.eqftp-file_tree--holder')});
                                 };
                             }
                             if (!params.path) {
@@ -420,7 +420,7 @@ define(function (require, exports, module) {
                         },
                         _fix_opened: function (params, e) {
                             _.delay(function () {
-                                var ft = $(e.target).closest('.eqftp-file_tree'),
+                                var ft = $(e.target).closest('.eqftp-file_tree--holder'),
                                     bl = ft.offset().top,
                                     ds = [];
                                 ft.find('.eqftp-opened').each(function () {
@@ -439,8 +439,8 @@ define(function (require, exports, module) {
                                         return b.d - a.d;
                                     });
                                     var ed = $(ds[0].t).children('.eqftp-file_tree-element_data'),
-                                        pl = $(ed).children('.eqftp-file_tree-element--col_name').offset().left - ft.offset().left,
-                                        c = $(ds[0].t).children('.eqftp-file_tree-element_data').clone(true);
+                                        pl = $(ed).offset().left - ft.offset().left,
+                                        c = $(ed).clone(true);
                                     c.css('padding-left', pl + 'px');
                                     $('.eqftp-fixed_folder').html(c);
                                 } else {
