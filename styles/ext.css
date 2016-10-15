@@ -190,6 +190,9 @@
 .fa-circle:before {
   content: ""; }
 
+.fa-link:before {
+  content: ""; }
+
 .eqftp-toolbar__icon {
   background-image: url(img/toolbar__icon.svg);
   background-size: contain; }
@@ -391,14 +394,14 @@
     z-index: 1;
     padding: 0 0 0 8px;
     box-sizing: border-box;
-    width: 100%; }
+    width: 100%;
+    overflow: hidden; }
     .eqftp-file_tree-subfolder .eqftp-file_tree-element {
       border-left: 1px solid rgba(0, 0, 0, 0.1);
       box-sizing: border-box;
       width: 100%;
       padding: 0 0 0 6px; }
   .eqftp-file_tree-element {
-    height: 18px;
     line-height: 18px;
     position: relative;
     width: 100%;
@@ -415,7 +418,7 @@
       white-space: nowrap;
       padding: 0px 5px;
       box-sizing: border-box; }
-      .eqftp-file_tree-element_data i.fa.fa-circle {
+      .eqftp-file_tree-element_data i.fa.fa-circle, .eqftp-file_tree-element_data i.fa.fa-link {
         font-size: 8px;
         vertical-align: middle;
         margin-top: -1px;
@@ -432,14 +435,14 @@
         text-overflow: ellipsis; }
       .eqftp-file_tree-element_col-date {
         width: 40%; }
-    .eqftp-file_tree-element.eqftp-loading .eqftp-file_tree-element_data i.fa.fa-circle {
+    .eqftp-file_tree-element.eqftp-loading .eqftp-file_tree-element_data i.fa.fa-circle, .eqftp-file_tree-element.eqftp-loading .eqftp-file_tree-element_data i.fa.fa-link {
       animation: eqftp-bounce 0.9s infinite ease-in-out; }
     .eqftp-file_tree-element.eqftp-opened {
       height: auto; }
-      .eqftp-file_tree-element.eqftp-opened > .eqftp-file_tree-element_data i.fa.fa-circle {
+      .eqftp-file_tree-element.eqftp-opened > .eqftp-file_tree-element_data i.fa.fa-circle, .eqftp-file_tree-element.eqftp-opened > .eqftp-file_tree-element_data i.fa.fa-link {
         color: #81B965; }
-      .eqftp-file_tree-element.eqftp-opened > .eqftp-file_tree-subfolder {
-        display: block; }
+.eqftp-extension {
+  opacity: 0.9; }
 .eqftp-welcome_screen {
   position: absolute;
   z-index: 10;

@@ -254,6 +254,7 @@
             padding: 0 0 0 8px;
             box-sizing: border-box;
             width: 100%;
+            overflow: hidden;
             & .eqftp-file_tree-element {
                 border-left: 1px solid rgba(0,0,0,0.1);
                 box-sizing: border-box;
@@ -262,7 +263,7 @@
             }
         }
         &-element {
-            height: 18px;
+            //height: 18px;
             line-height: 18px;
             position: relative;
             width: 100%;
@@ -281,7 +282,8 @@
                 white-space: nowrap;
                 padding: 0px 5px;
                 box-sizing: border-box;
-                & i.fa.fa-circle {
+                & i.fa.fa-circle,
+                & i.fa.fa-link {
                     font-size: 8px;
                     vertical-align: middle;
                     margin-top: -1px;
@@ -305,7 +307,8 @@
             }
             &.eqftp-loading {
                 & .eqftp-file_tree-element_data {
-                    & i.fa.fa-circle {
+                    & i.fa.fa-circle,
+                    & i.fa.fa-link {
                         animation: eqftp-bounce 0.9s infinite ease-in-out;
                     }
                 }
@@ -313,15 +316,19 @@
             &.eqftp-opened {
                 height: auto;
                 & > .eqftp-file_tree-element_data {
-                    & i.fa.fa-circle {
+                    & i.fa.fa-circle,
+                    & i.fa.fa-link {
                         color: #81B965;
                     }
                 }
                 & > .eqftp-file_tree-subfolder {
-                    display: block;
+                    //display: block;
                 }
             }
         }
+    }
+    &-extension {
+        opacity: 0.9;
     }
 
     &-welcome_screen {
