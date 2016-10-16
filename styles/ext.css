@@ -248,7 +248,8 @@
     .eqftp-panel__header__input {
       width: 100%;
       box-sizing: border-box;
-      height: 28px !important; }
+      height: 28px !important;
+      padding-right: 24px !important; }
     .eqftp-panel__header__menu_button {
       position: absolute;
       right: 22px;
@@ -288,8 +289,9 @@
       .eqftp-panel__infofooter > .eqftp-infofooter--msgholder > .eqftp-infofooter--msg {
         padding: 4px 15px; }
         .eqftp-panel__infofooter > .eqftp-infofooter--msgholder > .eqftp-infofooter--msg span {
-          display: inline-block;
-          vertical-align: middle; }
+          display: inline;
+          vertical-align: middle;
+          margin-right: 5px; }
         .eqftp-panel__infofooter > .eqftp-infofooter--msgholder > .eqftp-infofooter--msg > .eqftp-infofooter--time {
           width: 0;
           overflow: hidden;
@@ -333,8 +335,9 @@
     left: 0;
     bottom: 0;
     padding: 20px 10px 35px;
-    margin-bottom: 27px;
-    overflow: auto; }
+    margin-bottom: 26px;
+    overflow: auto;
+    z-index: 3; }
     .eqftp-panel__settings_window__settings_file_input {
       width: calc(100% - 100px); }
     .eqftp-panel__settings_window__save_button {

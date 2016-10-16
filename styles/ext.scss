@@ -66,6 +66,7 @@
                 width: 100%;
                 box-sizing: border-box;
                 height: 28px !important;
+                padding-right: 24px !important;
             }
             &__menu_button {
                 position: absolute;
@@ -123,8 +124,9 @@
                     //transform: scaleY(-1);
                     padding: 4px 15px;
                     & span {
-                        display: inline-block;
+                        display: inline;
                         vertical-align: middle;
+                        margin-right: 5px;
                     }
                     & > .eqftp-infofooter--time {
                         width: 0;
@@ -181,8 +183,9 @@
             left: 0;
             bottom: 0;
             padding: 20px 10px 35px;
-            margin-bottom: 27px;
+            margin-bottom: 26px;
             overflow: auto;
+            z-index: 3;
             &__settings_file_input {
                 width: calc(100% - 100px);
             }

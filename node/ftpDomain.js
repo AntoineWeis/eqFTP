@@ -6,8 +6,10 @@ maxerr: 50, node: true */
     "use strict";
     
     var EasyFTP = require('easy-ftp'),
+        safezone = require('domain').create(),
+        stackTrace = require('stack-trace'),
         _ = require("lodash");
-        
+    
     EasyFTP.prototype.e_raw = function (params, cb) {
         if (!params || !params.command) {
             return false;
@@ -41,6 +43,7 @@ maxerr: 50, node: true */
             }
         }
     };
+    
     var _domainManager,
         c = {},
         
@@ -77,11 +80,15 @@ maxerr: 50, node: true */
                     if (params.action) {
                         switch (params.action) {
                         case 'debug':
-                            params.info_string = JSON.stringify(params.info);
+                            console.log(params.trace);
+                            params.info_string = JSON.stringify(params.info) || '';
                             break;
                         }
                     }
                     _domainManager.emitEvent("eqFTP", "event", params);
+                },
+                getCodeLine: function () {
+                    return 1;
                 },
                 uniq: function () {
                     var n = Date.now(),
@@ -140,6 +147,11 @@ maxerr: 50, node: true */
                             });
                             eqftp.utils.event({
                                 action: 'debug',
+                                trace: {
+                                    func: stackTrace.get()[0].getFunctionName(),
+                                    filename: stackTrace.get()[0].getFileName(),
+                                    line: stackTrace.get()[0].getLineNumber()
+                                },
                                 info: err
                             });
                             if (eqftp.utils.check.isFunction(callback)) {
@@ -167,7 +179,12 @@ maxerr: 50, node: true */
                         });
                         eqftp.utils.event({
                             action: 'debug',
-                            info: err.message
+                            trace: {
+                                func: stackTrace.get()[0].getFunctionName(),
+                                filename: stackTrace.get()[0].getFileName(),
+                                line: stackTrace.get()[0].getLineNumber()
+                            },
+                            info: err.message || err
                         });
                         eqftp.connection._destroy(params.connection_hash);
                     }
@@ -187,23 +204,38 @@ maxerr: 50, node: true */
                     }
                     
                     if (!c[params.connection_hash]) {
-                        eqftp.connection._open(params, function (result) {
-                            if (result) {
-                                eqftp.ftp.pwd({
-                                    connection: params,
-                                    callback: function (result) {
-                                        if (result) {
-                                            c[params.connection_hash].start_path = result;
+                        try {
+                            eqftp.connection._open(params, function (result) {
+                                if (result) {
+                                    eqftp.ftp.pwd({
+                                        connection: params,
+                                        callback: function (result) {
+                                            if (result) {
+                                                c[params.connection_hash].start_path = result;
+                                            }
+                                            if (eqftp.utils.check.isFunction(callback)) {
+                                                callback(result);
+                                            }
                                         }
-                                        if (eqftp.utils.check.isFunction(callback)) {
-                                            callback(result);
-                                        }
-                                    }
-                                });
-                            } else if (eqftp.utils.check.isFunction(callback)) {
-                                callback(result);
+                                    });
+                                } else if (eqftp.utils.check.isFunction(callback)) {
+                                    callback(result);
+                                }
+                            });
+                        } catch (err) {
+                            eqftp.utils.event({
+                                action: 'debug',
+                                trace: {
+                                    func: stackTrace.get()[0].getFunctionName(),
+                                    filename: stackTrace.get()[0].getFileName(),
+                                    line: stackTrace.get()[0].getLineNumber()
+                                },
+                                info: err.message || err
+                            });
+                            if (callback && eqftp.utils.check.isFunction(callback)) {
+                                callback(false);
                             }
-                        });
+                        }
                     } else {
                         if (eqftp.utils.check.isFunction(callback)) {
                             callback(true);
@@ -228,6 +260,11 @@ maxerr: 50, node: true */
                                     /* ITS A FILE! */
                                     eqftp.utils.event({
                                         action: 'debug',
+                                        trace: {
+                                            func: stackTrace.get()[0].getFunctionName(),
+                                            filename: stackTrace.get()[0].getFileName(),
+                                            line: stackTrace.get()[0].getLineNumber()
+                                        },
                                         info: err
                                     });
                                     if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
@@ -270,6 +307,11 @@ maxerr: 50, node: true */
                                 if (err) {
                                     eqftp.utils.event({
                                         action: 'debug',
+                                        trace: {
+                                            func: stackTrace.get()[0].getFunctionName(),
+                                            filename: stackTrace.get()[0].getFileName(),
+                                            line: stackTrace.get()[0].getLineNumber()
+                                        },
                                         info: err
                                     });
                                     if (params._id) {
@@ -296,7 +338,12 @@ maxerr: 50, node: true */
                         } catch (err) {
                             eqftp.utils.event({
                                 action: 'debug',
-                                info: err.message
+                                trace: {
+                                    func: stackTrace.get()[0].getFunctionName(),
+                                    filename: stackTrace.get()[0].getFileName(),
+                                    line: stackTrace.get()[0].getLineNumber()
+                                },
+                                info: err.message || err
                             });
                             if (params._id) {
                                 eqftp.utils.event({
@@ -330,16 +377,19 @@ maxerr: 50, node: true */
                         try {
                             if (eqftp.utils.check.isString(params.path) && !params.path.match(/^\//)) {
                                 params.path = eqftp.utils.normalize(c[params.connection.connection_hash].start_path + '/' + params.path);
+                            } else if (!eqftp.utils.check.isString(params.path)) {
+                                params.path = eqftp.utils.normalize(c[params.connection.connection_hash].start_path + '/');
                             }
                             params.start_path = c[params.connection.connection_hash].start_path;
-                            eqftp.utils.event({
-                                action: 'debug',
-                                info: [params.path]
-                            });
                             c[params.connection.connection_hash].server.ls(params.path, _.once(function (err, contents) {
                                 if (err) {
                                     eqftp.utils.event({
                                         action: 'debug',
+                                        trace: {
+                                            func: stackTrace.get()[0].getFunctionName(),
+                                            filename: stackTrace.get()[0].getFileName(),
+                                            line: stackTrace.get()[0].getLineNumber()
+                                        },
                                         info: err
                                     });
                                     if (params._id) {
@@ -381,7 +431,12 @@ maxerr: 50, node: true */
                         } catch (err) {
                             eqftp.utils.event({
                                 action: 'debug',
-                                info: err.message
+                                trace: {
+                                    func: stackTrace.get()[0].getFunctionName(),
+                                    filename: stackTrace.get()[0].getFileName(),
+                                    line: stackTrace.get()[0].getLineNumber()
+                                },
+                                info: err.message || err
                             });
                             if (params._id) {
                                 eqftp.utils.event({
@@ -417,6 +472,11 @@ maxerr: 50, node: true */
                                 if (err) {
                                     eqftp.utils.event({
                                         action: 'debug',
+                                        trace: {
+                                            func: stackTrace.get()[0].getFunctionName(),
+                                            filename: stackTrace.get()[0].getFileName(),
+                                            line: stackTrace.get()[0].getLineNumber()
+                                        },
                                         info: err
                                     });
                                     if (params._id) {
@@ -443,7 +503,12 @@ maxerr: 50, node: true */
                         } catch (err) {
                             eqftp.utils.event({
                                 action: 'debug',
-                                info: err.message
+                                trace: {
+                                    func: stackTrace.get()[0].getFunctionName(),
+                                    filename: stackTrace.get()[0].getFileName(),
+                                    line: stackTrace.get()[0].getLineNumber()
+                                },
+                                info: err.message || err
                             });
                             if (params._id) {
                                 eqftp.utils.event({
@@ -489,7 +554,12 @@ maxerr: 50, node: true */
                         } catch (err) {
                             eqftp.utils.event({
                                 action: 'debug',
-                                info: err.message
+                                trace: {
+                                    func: stackTrace.get()[0].getFunctionName(),
+                                    filename: stackTrace.get()[0].getFileName(),
+                                    line: stackTrace.get()[0].getLineNumber()
+                                },
+                                info: err.message || err
                             });
                             if (params._id) {
                                 eqftp.utils.event({
@@ -525,6 +595,11 @@ maxerr: 50, node: true */
                                 if (err) {
                                     eqftp.utils.event({
                                         action: 'debug',
+                                        trace: {
+                                            func: stackTrace.get()[0].getFunctionName(),
+                                            filename: stackTrace.get()[0].getFileName(),
+                                            line: stackTrace.get()[0].getLineNumber()
+                                        },
                                         info: err
                                     });
                                     if (params._id) {
@@ -551,7 +626,82 @@ maxerr: 50, node: true */
                         } catch (err) {
                             eqftp.utils.event({
                                 action: 'debug',
-                                info: err.message
+                                trace: {
+                                    func: stackTrace.get()[0].getFunctionName(),
+                                    filename: stackTrace.get()[0].getFileName(),
+                                    line: stackTrace.get()[0].getLineNumber()
+                                },
+                                info: err.message || err
+                            });
+                            if (params._id) {
+                                eqftp.utils.event({
+                                    action: 'callback',
+                                    _id: params._id,
+                                    callback: false
+                                });
+                            } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
+                                params.callback(false);
+                            }
+                        }
+                    }));
+                },
+                download: function (params) {
+                    /*
+                    connection, localpath, remotepath
+                    */
+                    eqftp.connection.create(params.connection, _.once(function (result) {
+                        if (!result) {
+                            if (params._id) {
+                                eqftp.utils.event({
+                                    action: 'callback',
+                                    _id: params._id,
+                                    callback: false
+                                });
+                            } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
+                                params.callback(false);
+                            }
+                            return false;
+                        }
+                        try {
+                            if (!c[params.connection.connection_hash].queue) {
+                                c[params.connection.connection_hash].queue = {};
+                            }
+                            c[params.connection.connection_hash].queue[params.localpath] = function (result) {
+                                _.unset(c[params.connection.connection_hash].queue, params.localpath);
+                                if (params._id) {
+                                    eqftp.utils.event({
+                                        action: 'callback',
+                                        _id: params._id,
+                                        callback: result
+                                    });
+                                } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
+                                    params.callback(result);
+                                }
+                            };
+                            c[params.connection.connection_hash].server.download(params.remotepath, params.localpath, _.once(function (err) {
+                                if (err) {
+                                    eqftp.utils.event({
+                                        action: 'debug',
+                                        trace: {
+                                            func: stackTrace.get()[0].getFunctionName(),
+                                            filename: stackTrace.get()[0].getFileName(),
+                                            line: stackTrace.get()[0].getLineNumber()
+                                        },
+                                        info: err
+                                    });
+                                    c[params.connection.connection_hash].queue[params.localpath](false);
+                                    return false;
+                                }
+                            }));
+                        } catch (err) {
+                            eqftp.utils.event({
+                                action: 'debug',
+                                trace: {
+                                    func: stackTrace.get()[0].getFunctionName(),
+                                    filename: stackTrace.get()[0].getFileName(),
+                                    line: stackTrace.get()[0].getLineNumber()
+                                },
+                                info: err.message || err
                             });
                             if (params._id) {
                                 eqftp.utils.event({
@@ -567,6 +717,24 @@ maxerr: 50, node: true */
                 }
             }
         };
+    
+    safezone.on('error', function (err) {
+        eqftp.utils.event({
+            action: 'error',
+            text: 'Some error happened',
+            errType: 'connections',
+            error: err
+        });
+        eqftp.utils.event({
+            action: 'debug',
+            trace: {
+                func: stackTrace.get()[0].getFunctionName(),
+                filename: stackTrace.get()[0].getFileName(),
+                line: stackTrace.get()[0].getLineNumber()
+            },
+            info: err
+        });
+    });
     
     function init(DomainManager) {
         if (!DomainManager.hasDomain("eqFTP")) {
@@ -586,14 +754,22 @@ maxerr: 50, node: true */
                     if (eqftp.utils.check.isObject(tmp[o])) {
                         tmp = tmp[o];
                     } else if (eqftp.utils.check.isFunction(tmp[o])) {
-                        try {
-                            tmp[o](params);
-                        } catch (err) {
-                            eqftp.utils.event({
-                                action: 'debug',
-                                info: err.message
-                            });
-                        }
+                        safezone.run(function () {
+                            /* LOL WHAT COULD HAPPEN LOL ITS DOMAINS FUCK WARNINGS */
+                            try {
+                                tmp[o](params);
+                            } catch (err) {
+                                eqftp.utils.event({
+                                    action: 'debug',
+                                    trace: {
+                                        func: stackTrace.get()[0].getFunctionName(),
+                                        filename: stackTrace.get()[0].getFileName(),
+                                        line: stackTrace.get()[0].getLineNumber()
+                                    },
+                                    info: err.message || err
+                                });
+                            }
+                        });
                         return true;
                     } else {
                         return true;

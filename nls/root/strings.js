@@ -110,6 +110,8 @@ define({
     "eqftp__connection__errors__ECONNRESET" : "A connection was forcibly closed by a peer. This normally results from a loss of the connection on the remote socket due to a timeout or reboot.",
     "eqftp__connection__errors__ENOENT" : "No entity (file or directory) could be found by the given path.",
     "eqftp__connection__errors__ETIMEDOUT" : "A connect or send request failed because the connected party did not properly respond after a period of time. ",
+    // host will be appended to phrase:
+    "eqftp__connection__temporary_prefix" : "Temporary connection to ",
     
     
     "eqftp__file_tree__type_directory" : "folder",
