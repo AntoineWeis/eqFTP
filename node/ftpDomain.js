@@ -6,10 +6,86 @@ maxerr: 50, node: true */
     "use strict";
     
     var EasyFTP = require('easy-ftp'),
+        FileUtil = require('easy-ftp/lib/FileUtil'),
         safezone = require('domain').create(),
         stackTrace = require('stack-trace'),
         _ = require("lodash");
     
+    EasyFTP.prototype.e_download = function (remotepath, localpath, cb) {
+        var self = this;
+        if (!cb) {
+            cb = function () {};
+        }
+
+        if (!this.isConnect) {
+            this.waitConnect(function () {
+                self.download(remotepath, localpath, cb);
+            });
+        } else {
+            var cwd = this.currentPath;
+            if (!_.isString(remotepath) || !_.isString(localpath)) {
+                cb('remotepath or localpath is not a string.'); // err, data
+            }
+            remotepath = this.getRealRemotePath(remotepath);
+            var tempLocalPath = localpath;
+            localpath = FileUtil.replaceCorrectPath(localpath);
+
+            this.cd(remotepath, function (err, path) {
+                if (err) {
+                    if (FileUtil.isDirSync(localpath)) {
+                        localpath = FileUtil.replaceCorrectPath(localpath + "/" + FileUtil.getFileName(remotepath));
+                    } else {
+                        if (/\/$/.test(tempLocalPath)) {
+                            FileUtil.mkdirSync(tempLocalPath);
+                            localpath = tempLocalPath + FileUtil.getFileName(remotepath);
+                        } else {
+                            FileUtil.mkdirSync(FileUtil.getParentPath(localpath));
+                        }
+                    }
+                    if (self.isFTP) {
+                        self.client.download(remotepath, localpath, function (err) {
+                            if (!err) {
+                                cb(false, {
+                                    localpath: localpath,
+                                    remotepath: remotepath
+                                }); // err, data
+                            }
+                            self.cd(cwd, function () {
+                                if (cb) {
+                                    cb(err); // err, data
+                                }
+                            });
+                        });
+                    } else {
+                        self.client.sftp(function (err, sftp) {
+                            sftp.fastGet(remotepath, localpath, {concurrency: 1}, function (err) {
+                                sftp.end();
+                                if (err) {
+                                    self.cd(cwd, function () {
+                                        if (cb) {
+                                            cb(err); // err, data
+                                        }
+                                    });
+                                } else {
+                                    self.emit("download", localpath);
+                                    self.cd(cwd, function () {
+                                        if (cb) {
+                                            cb(false, {
+                                                localpath: localpath,
+                                                remotepath: remotepath
+                                            }); // err, data
+                                        }
+                                    });
+                                }
+                            });
+                        });
+                    }
+                } else {
+                    cb(true); // err, data
+                }
+            });
+        }
+    };
     EasyFTP.prototype.e_raw = function (params, cb) {
         if (!params || !params.command) {
             return false;
@@ -663,22 +739,8 @@ maxerr: 50, node: true */
                             return false;
                         }
                         try {
-                            if (!c[params.connection.connection_hash].queue) {
-                                c[params.connection.connection_hash].queue = {};
-                            }
-                            c[params.connection.connection_hash].queue[params.localpath] = function (result) {
-                                _.unset(c[params.connection.connection_hash].queue, params.localpath);
-                                if (params._id) {
-                                    eqftp.utils.event({
-                                        action: 'callback',
-                                        _id: params._id,
-                                        callback: result
-                                    });
-                                } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
-                                    params.callback(result);
-                                }
-                            };
-                            c[params.connection.connection_hash].server.download(params.remotepath, params.localpath, _.once(function (err) {
+                            c[params.connection.connection_hash].server.e_download(params.remotepath, params.localpath, _.once(function (err, data) {
+                                console.log(err, data);
                                 if (err) {
                                     eqftp.utils.event({
                                         action: 'debug',
@@ -689,8 +751,25 @@ maxerr: 50, node: true */
                                         },
                                         info: err
                                     });
-                                    c[params.connection.connection_hash].queue[params.localpath](false);
+                                    if (params._id) {
+                                        eqftp.utils.event({
+                                            action: 'callback',
+                                            _id: params._id,
+                                            callback: false
+                                        });
+                                    } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
+                                        params.callback(false);
+                                    }
                                     return false;
+                                }
+                                if (params._id) {
+                                    eqftp.utils.event({
+                                        action: 'callback',
+                                        _id: params._id,
+                                        callback: true
+                                    });
+                                } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
+                                    params.callback(true);
                                 }
                             }));
                         } catch (err) {

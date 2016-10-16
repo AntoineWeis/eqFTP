@@ -465,7 +465,9 @@ define(function (require, exports, module) {
                         open_file: function (params, e) {
                             var t = $(e.target).closest('.eqftp-file_tree-element'),
                                 path = t.find('[eqftp-tree_path]:first').attr('eqftp-tree_path');
-                            eqftp.connections.download(params.connection_id, path);
+                            eqftp.connections.download(params.connection_id, path, function (result) {
+                                console.log(result);
+                            });
                         },
                         _fix_opened: function (params, e) {
                             _.delay(function () {
