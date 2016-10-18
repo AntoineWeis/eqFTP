@@ -5,120 +5,10 @@ maxerr: 50, node: true */
 (function () {
     "use strict";
     
-    var EasyFTP = require('easy-ftp'),
-        FileUtil = require('easy-ftp/lib/FileUtil'),
+    var EFTP = require('eftp'),
         safezone = require('domain').create(),
         stackTrace = require('stack-trace'),
         _ = require("lodash");
-    
-    EasyFTP.prototype.e_download = function (remotepath, localpath, cb) {
-        var self = this;
-        if (!cb) {
-            cb = function () {};
-        }
-
-        if (!this.isConnect) {
-            this.waitConnect(function () {
-                self.download(remotepath, localpath, cb);
-            });
-        } else {
-            var cwd = this.currentPath;
-            if (!_.isString(remotepath) || !_.isString(localpath)) {
-                cb('remotepath or localpath is not a string.'); // err, data
-            }
-            remotepath = this.getRealRemotePath(remotepath);
-            var tempLocalPath = localpath;
-            localpath = FileUtil.replaceCorrectPath(localpath);
-
-            this.cd(remotepath, function (err, path) {
-                if (err) {
-                    if (FileUtil.isDirSync(localpath)) {
-                        localpath = FileUtil.replaceCorrectPath(localpath + "/" + FileUtil.getFileName(remotepath));
-                    } else {
-                        if (/\/$/.test(tempLocalPath)) {
-                            FileUtil.mkdirSync(tempLocalPath);
-                            localpath = tempLocalPath + FileUtil.getFileName(remotepath);
-                        } else {
-                            FileUtil.mkdirSync(FileUtil.getParentPath(localpath));
-                        }
-                    }
-                    if (self.isFTP) {
-                        self.client.download(remotepath, localpath, function (err) {
-                            if (!err) {
-                                cb(false, {
-                                    localpath: localpath,
-                                    remotepath: remotepath
-                                }); // err, data
-                            }
-                            self.cd(cwd, function () {
-                                if (cb) {
-                                    cb(err); // err, data
-                                }
-                            });
-                        });
-                    } else {
-                        self.client.sftp(function (err, sftp) {
-                            sftp.fastGet(remotepath, localpath, {concurrency: 1}, function (err) {
-                                sftp.end();
-                                if (err) {
-                                    self.cd(cwd, function () {
-                                        if (cb) {
-                                            cb(err); // err, data
-                                        }
-                                    });
-                                } else {
-                                    self.emit("download", localpath);
-                                    self.cd(cwd, function () {
-                                        if (cb) {
-                                            cb(false, {
-                                                localpath: localpath,
-                                                remotepath: remotepath
-                                            }); // err, data
-                                        }
-                                    });
-                                }
-                            });
-                        });
-                    }
-                } else {
-                    cb(true); // err, data
-                }
-            });
-        }
-    };
-    EasyFTP.prototype.e_raw = function (params, cb) {
-        if (!params || !params.command) {
-            return false;
-        }
-        if (!cb) {
-            cb = function () {};
-        }
-        var self = this;
-        if (!this.isConnect) {
-            this.waitConnect(function () {
-                self.ls(params, cb);
-            });
-        } else {
-            if (this.isFTP) {
-                self.client.client.raw[params.command](params.options, cb);
-            } else {
-                self.client.exec(params.command, params.options, function (err, stream) {
-                    if (err) {
-                        cb(err, false);
-                        return false;
-                    }
-                    stream.on('close', function (code, signal) {
-                        console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
-                        cb(code, signal);
-                    }).on('data', function (data) {
-                        cb(false, data);
-                    }).stderr.on('data', function (data) {
-                        cb(true, data);
-                    });
-                });
-            }
-        }
-    };
     
     var _domainManager,
         c = {},
@@ -189,10 +79,10 @@ maxerr: 50, node: true */
                 _open: function (params, callback) {
                     try {
                         c[params.connection_hash] = {
-                            server: new EasyFTP()
+                            server: new EFTP()
                         };
                         
-                        c[params.connection_hash].server.on('open', function () {
+                        c[params.connection_hash].server.on('ready', function () {
                             eqftp.utils.event({
                                 action: 'connection',
                                 id: params.id,
@@ -241,7 +131,8 @@ maxerr: 50, node: true */
                             type: params.protocol,
                             port: params.port || 21,
                             username: params.login,
-                            password: params.password
+                            password: params.password,
+                            debugMode: true
                         };
                         if (params.rsa) {
                             settings.privateKey = params.rsa;
@@ -739,7 +630,7 @@ maxerr: 50, node: true */
                             return false;
                         }
                         try {
-                            c[params.connection.connection_hash].server.e_download(params.remotepath, params.localpath, _.once(function (err, data) {
+                            c[params.connection.connection_hash].server.download(params.remotepath, params.localpath, function (err, data) {
                                 console.log(err, data);
                                 if (err) {
                                     eqftp.utils.event({
@@ -771,7 +662,7 @@ maxerr: 50, node: true */
                                 } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
                                     params.callback(true);
                                 }
-                            }));
+                            });
                         } catch (err) {
                             eqftp.utils.event({
                                 action: 'debug',
@@ -814,6 +705,8 @@ maxerr: 50, node: true */
             info: err
         });
     });
+    
+    console.log('Version: ' + process.version);
     
     function init(DomainManager) {
         if (!DomainManager.hasDomain("eqFTP")) {
