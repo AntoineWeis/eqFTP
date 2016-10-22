@@ -706,8 +706,6 @@ maxerr: 50, node: true */
         });
     });
     
-    console.log('Version: ' + process.version);
-    
     function init(DomainManager) {
         if (!DomainManager.hasDomain("eqFTP")) {
             DomainManager.registerDomain("eqFTP", {major: 1, minor: 0});
