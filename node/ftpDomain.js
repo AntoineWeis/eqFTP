@@ -614,7 +614,7 @@ maxerr: 50, node: true */
                 },
                 download: function (params) {
                     /*
-                    connection, localpath, remotepath
+                    connection, queuer
                     */
                     eqftp.connection.create(params.connection, _.once(function (result) {
                         if (!result) {
@@ -630,8 +630,7 @@ maxerr: 50, node: true */
                             return false;
                         }
                         try {
-                            c[params.connection.connection_hash].server.download(params.remotepath, params.localpath, function (err, data) {
-                                console.log(err, data);
+                            c[params.connection.connection_hash].server.download(params.queuer, function (err, data) {
                                 if (err) {
                                     eqftp.utils.event({
                                         action: 'debug',
@@ -657,10 +656,10 @@ maxerr: 50, node: true */
                                     eqftp.utils.event({
                                         action: 'callback',
                                         _id: params._id,
-                                        callback: true
+                                        callback: data
                                     });
                                 } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
-                                    params.callback(true);
+                                    params.callback(data);
                                 }
                             });
                         } catch (err) {
