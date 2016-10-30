@@ -303,6 +303,7 @@
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
+                    position: relative;
                 }
                 &-date {
                     width: 40%;
@@ -609,6 +610,17 @@
             display: block;
         }
     }
+    &-progress_bar {
+        position: absolute;
+        z-index: -1;
+        height: 100%;
+        background: #0089FF;
+        opacity: 0.2;
+        top: 0;
+        left: 0;
+        transition: width 0.1s;
+        border-radius: 3px;
+    }
 }
 
 @keyframes eqftp-bounce {
@@ -774,6 +786,29 @@
 
         &-secondary_link {
             color: #838383;
+        }
+    }
+}
+
+@keyframes rainbow {
+    0% {color: #ff0000;}
+    10% {color: #ff8000;}
+    20% {color: #ffff00;}
+    30% {color: #80ff00;}
+    40% {color: #00ff00;}
+    50% {color: #00ff80;}
+    60% {color: #00ffff;}
+    70% {color: #0080ff;}
+    80% {color: #0000ff;}
+    90% {color: #8000ff;}
+    100% {color: #ff0080;}
+}
+
+.ext {
+    &-gay, &-lgbt {
+        & .eqftp-extension {
+            -webkit-animation:rainbow 1s infinite;
+            animation:rainbow 1s infinite;
         }
     }
 }

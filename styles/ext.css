@@ -435,7 +435,8 @@
         width: 60%;
         white-space: nowrap;
         overflow: hidden;
-        text-overflow: ellipsis; }
+        text-overflow: ellipsis;
+        position: relative; }
       .eqftp-file_tree-element_col-date {
         width: 40%; }
     .eqftp-file_tree-element.eqftp-loading .eqftp-file_tree-element_data i.fa.fa-circle, .eqftp-file_tree-element.eqftp-loading .eqftp-file_tree-element_data i.fa.fa-link {
@@ -632,6 +633,16 @@
   display: block; }
 .eqftp-ftp .eqftp-ftp_only {
   display: block; }
+.eqftp-progress_bar {
+  position: absolute;
+  z-index: -1;
+  height: 100%;
+  background: #0089FF;
+  opacity: 0.2;
+  top: 0;
+  left: 0;
+  transition: width 0.1s;
+  border-radius: 3px; }
 
 @keyframes eqftp-bounce {
   0%, 100% {
@@ -717,5 +728,32 @@
   border-left: 1px solid rgba(255, 255, 255, 0.1); }
 .dark .eqftp-secondary_link {
   color: #838383; }
+
+@keyframes rainbow {
+  0% {
+    color: #ff0000; }
+  10% {
+    color: #ff8000; }
+  20% {
+    color: #ffff00; }
+  30% {
+    color: #80ff00; }
+  40% {
+    color: #00ff00; }
+  50% {
+    color: #00ff80; }
+  60% {
+    color: #00ffff; }
+  70% {
+    color: #0080ff; }
+  80% {
+    color: #0000ff; }
+  90% {
+    color: #8000ff; }
+  100% {
+    color: #ff0080; } }
+.ext-gay .eqftp-extension, .ext-lgbt .eqftp-extension {
+  -webkit-animation: rainbow 1s infinite;
+  animation: rainbow 1s infinite; }
 
 /*# sourceMappingURL=ext.css.map */

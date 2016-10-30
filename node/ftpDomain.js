@@ -125,6 +125,13 @@ maxerr: 50, node: true */
                             }
                             eqftp.connection._destroy(params.connection_hash);
                         });
+                        c[params.connection_hash].server.on('progress', function (data) {
+                            eqftp.utils.event({
+                                action: 'progress',
+                                id: params.id,
+                                data: data
+                            });
+                        });
                         
                         var settings = {
                             host: params.server,
@@ -326,7 +333,7 @@ maxerr: 50, node: true */
                 },
                 ls: function (params) {
                     /*
-                    connection, path
+                    connection, queuer
                     */
                     eqftp.connection.create(params.connection, _.once(function (result) {
                         if (!result) {
@@ -342,13 +349,13 @@ maxerr: 50, node: true */
                             return false;
                         }
                         try {
-                            if (eqftp.utils.check.isString(params.path) && !params.path.match(/^\//)) {
-                                params.path = eqftp.utils.normalize(c[params.connection.connection_hash].start_path + '/' + params.path);
-                            } else if (!eqftp.utils.check.isString(params.path)) {
-                                params.path = eqftp.utils.normalize(c[params.connection.connection_hash].start_path + '/');
+                            if (eqftp.utils.check.isString(params.queuer.remotepath) && !params.queuer.remotepath.match(/^\//)) {
+                                params.queuer.remotepath = eqftp.utils.normalize(c[params.connection.connection_hash].start_path + '/' + params.queuer.remotepath);
+                            } else if (!eqftp.utils.check.isString(params.queuer.remotepath)) {
+                                params.queuer.remotepath = eqftp.utils.normalize(c[params.connection.connection_hash].start_path + '/');
                             }
                             params.start_path = c[params.connection.connection_hash].start_path;
-                            c[params.connection.connection_hash].server.ls(params.path, _.once(function (err, contents) {
+                            c[params.connection.connection_hash].server.ls(params.queuer.remotepath, _.once(function (err, contents) {
                                 if (err) {
                                     eqftp.utils.event({
                                         action: 'debug',
@@ -374,7 +381,7 @@ maxerr: 50, node: true */
                                     if (!v.filename) {
                                         contents[i].filename = v.name;
                                     }
-                                    contents[i].full_path = eqftp.utils.normalize(params.path + '/' + v.filename);
+                                    contents[i].full_path = eqftp.utils.normalize(params.queuer.remotepath + '/' + v.filename);
                                     if (v.longname && v.longname.indexOf('l') === 0) {
                                         contents[i].type = 'l';
                                     }
