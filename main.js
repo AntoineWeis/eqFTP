@@ -152,6 +152,24 @@ define(function (require, exports, module) {
                                                 eqftp.ui.panel.file_tree.render({
                                                     connection_id: result.params.connection.id
                                                 });
+                                            } else {
+                                                eqftp.queue.add({
+                                                    action: 'ls',
+                                                    connection_id: params.connection_id,
+                                                    remotepath: '',
+                                                    callback: function (result) {
+                                                        if (result) {
+                                                            eqftp.ui.panel.file_tree.render({
+                                                                connection_id: result.params.connection.id
+                                                            });
+                                                        } else {
+                                                            console.error('NO SUCH FOLDER');
+                                                        }
+                                                    },
+                                                    opened: true,
+                                                    priority: 1,
+                                                    queue_type: 'auto'
+                                                });
                                             }
                                         },
                                         opened: true,
@@ -198,6 +216,8 @@ define(function (require, exports, module) {
                                                         eqftp.ui.panel.file_tree.render({
                                                             connection_id: result.params.connection.id
                                                         });
+                                                    } else {
+                                                        console.error('NO SUCH FOLDER');
                                                     }
                                                 },
                                                 opened: true,
@@ -478,7 +498,7 @@ define(function (require, exports, module) {
                         open_folder: function (params, e) {
                             var t = $(e.target).closest('.eqftp-file_tree-element'),
                                 sf = $(t).children('.eqftp-file_tree-subfolder'),
-                                path = t.find('[eqftp-tree_path]:first').attr('eqftp-tree_path');
+                                path = eqftp.utils.normalize(t.find('[eqftp-tree_path]:first').attr('eqftp-tree_path') + '/');
                             $(t).addClass('eqftp-loading');
                             if (_eqFTPCache.connection_contents[params.connection_id] && _eqFTPCache.connection_contents[params.connection_id][path]) {
                                 if (_eqFTPCache.connection_contents[params.connection_id][path].status === 'opened') {
@@ -580,7 +600,7 @@ define(function (require, exports, module) {
                                             name: e.filename,
                                             datemodified: dateFormat(_eqFTPSettings.main.date_format, new Date(e.date)),
                                             datemodified_o: e.date,
-                                            path: e.full_path,
+                                            path: eqftp.utils.normalize(e.full_path + '/'),
                                             connid: params.connection_id
                                         }, 'element_');
                                         break;
@@ -1275,7 +1295,7 @@ define(function (require, exports, module) {
                                         _eqFTPCache.connection_info[result.params.connection.id] = {};
                                     }
                                     if (!_eqFTPCache.connection_info[result.params.connection.id].start_path) {
-                                        _eqFTPCache.connection_info[result.params.connection.id].start_path = connection.remotepath || '';
+                                        _eqFTPCache.connection_info[result.params.connection.id].start_path = result.params.start_path || '';
                                         if (!_eqFTPCache.connection_info[result.params.connection.id].start_path.match(/^\//)) {
                                             _eqFTPCache.connection_info[result.params.connection.id].start_path = result.params.start_path + '/' + _eqFTPCache.connection_info[result.params.connection.id].start_path;
                                         }
@@ -1298,13 +1318,16 @@ define(function (require, exports, module) {
                                     }
                                 }
                                 cb(result);
-                                eqftp.queue.update({
-                                    connection_id: connection.id,
-                                    queuer_id: result.params.queuer._id,
-                                    remove: true
-                                });
+                                if (result) {
+                                    eqftp.queue.update({
+                                        connection_id: connection.id,
+                                        queuer_id: result.params.queuer._id,
+                                        remove: true
+                                    });
+                                }
                             }
-                            queuer.remotepath = params.remotepath || connection.remotepath;
+                            queuer.remotepath = (params.remotepath == undefined) ? connection.remotepath : params.remotepath;
+                            queuer.remotepath = eqftp.utils.normalize(queuer.remotepath + '/');
                             break;
                         case 'rm':
                             break;
