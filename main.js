@@ -737,13 +737,13 @@ define(function (require, exports, module) {
                         }
                     });
                 },
-                // accepts string `path__to__method--parameter=value;second=foobar` excluding eqftp in start
+                // accepts string `path__to__method?parameter=value&second=foobar` excluding eqftp in start
                 action: function (action, event, returnit) {
-                    var actions = action.split('--'),
+                    var actions = action.split('?'),
                         methods = actions[0].split('__'),
                         args = {};
                     if (!!actions[1]) {
-                        var arguments_pairs = actions[1].split(';');
+                        var arguments_pairs = actions[1].split('&');
                         arguments_pairs.forEach(function (pair, n) {
                             pair = pair.split('=');
                             args[pair[0]] = pair[1];
