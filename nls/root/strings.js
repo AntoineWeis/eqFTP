@@ -132,7 +132,7 @@ define({
     "eqftp__button_continue" : "Continue",
     // Universal button that says "Yes". Literally means acceptance of offer.
     "eqftp__button_yes" : "Yes",
-    // Universal button that says "No". Well, it's opposite of Yes - offer denying.
+    // Universal button that says "No". Well, it's opposite of Yes - offer's denying.
     "eqftp__button_no" : "No",
     "eqftp__button_save" : "Save",
     
@@ -145,6 +145,10 @@ define({
     "eqftp__log__settings__save_success" : "Settings saved",
     "eqftp__log__settings__save_error" : "Cannot save settings",
     "eqftp__log__settings__load_success" : "Settings loaded",
+    
+    "eqftp__log__error__folder_not_found" : "Requested folder was not found",
+    // Please note that folder name will be appended after next sentence:
+    "eqftp__log__error__folder_not_found__exact" : "This folder was not found: ",
     
     "eqftp__filesize_bytes" : "bytes",
     "eqftp__filesize_kilobytes" : "kb",
