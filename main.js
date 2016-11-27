@@ -148,12 +148,13 @@ define(function (require, exports, module) {
                                         action: 'ls',
                                         connection_id: params.connection_id,
                                         callback: function (result) {
+                                            var connection = eqftp.connections._getByID(params.connection_id);
                                             if (result) {
                                                 eqftp.ui.panel.file_tree.render({
                                                     connection_id: result.params.connection.id
                                                 });
                                             } else {
-                                                var connection = eqftp.connections._getByID(params.connection_id);
+                                                connection.remotepath = undefined;
                                                 eqftp.utils.log(strings.eqftp__log__error__folder_not_found__exact + connection.remotepath, 'error');
                                                 eqftp.queue.add({
                                                     action: 'ls',
@@ -1298,7 +1299,7 @@ define(function (require, exports, module) {
                                     _eqFTPCache.connection_info[result.params.connection.id] = {};
                                 }
                                 if (!_eqFTPCache.connection_info[result.params.connection.id].start_path) {
-                                    _eqFTPCache.connection_info[result.params.connection.id].start_path = result.params.start_path || '';
+                                    _eqFTPCache.connection_info[result.params.connection.id].start_path = connection.remotepath || result.params.start_path || '';
                                     if (!_eqFTPCache.connection_info[result.params.connection.id].start_path.match(/^\//)) {
                                         _eqFTPCache.connection_info[result.params.connection.id].start_path = result.params.start_path + '/' + _eqFTPCache.connection_info[result.params.connection.id].start_path;
                                     }

@@ -350,7 +350,7 @@ maxerr: 50, node: true */
                         }
                         try {
                             if (eqftp.utils.check.isString(params.queuer.remotepath) && !params.queuer.remotepath.match(/^\//)) {
-                                params.queuer.remotepath = eqftp.utils.normalize(c[params.connection.connection_hash].start_path + '/' + params.queuer.remotepath);
+                                params.queuer.remotepath = eqftp.utils.normalize(c[params.connection.connection_hash].start_path + '/' + params.queuer.remotepath + '/');
                             } else if (!eqftp.utils.check.isString(params.queuer.remotepath)) {
                                 params.queuer.remotepath = eqftp.utils.normalize(c[params.connection.connection_hash].start_path + '/');
                             }
