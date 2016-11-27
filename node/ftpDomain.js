@@ -46,7 +46,7 @@ maxerr: 50, node: true */
                     if (params.action) {
                         switch (params.action) {
                         case 'debug':
-                            console.log(params.trace);
+                            console.log(params, params.trace);
                             params.info_string = JSON.stringify(params.info) || '';
                             break;
                         }
@@ -638,6 +638,78 @@ maxerr: 50, node: true */
                         }
                         try {
                             c[params.connection.connection_hash].server.download(params.queuer, function (err, data) {
+                                if (err) {
+                                    eqftp.utils.event({
+                                        action: 'debug',
+                                        trace: {
+                                            func: stackTrace.get()[0].getFunctionName(),
+                                            filename: stackTrace.get()[0].getFileName(),
+                                            line: stackTrace.get()[0].getLineNumber()
+                                        },
+                                        info: err
+                                    });
+                                    if (params._id) {
+                                        eqftp.utils.event({
+                                            action: 'callback',
+                                            _id: params._id,
+                                            callback: false
+                                        });
+                                    } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
+                                        params.callback(false);
+                                    }
+                                    return false;
+                                }
+                                if (params._id) {
+                                    eqftp.utils.event({
+                                        action: 'callback',
+                                        _id: params._id,
+                                        callback: data
+                                    });
+                                } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
+                                    params.callback(data);
+                                }
+                            });
+                        } catch (err) {
+                            eqftp.utils.event({
+                                action: 'debug',
+                                trace: {
+                                    func: stackTrace.get()[0].getFunctionName(),
+                                    filename: stackTrace.get()[0].getFileName(),
+                                    line: stackTrace.get()[0].getLineNumber()
+                                },
+                                info: err.message || err
+                            });
+                            if (params._id) {
+                                eqftp.utils.event({
+                                    action: 'callback',
+                                    _id: params._id,
+                                    callback: false
+                                });
+                            } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
+                                params.callback(false);
+                            }
+                        }
+                    }));
+                },
+                upload: function (params) {
+                    /*
+                    connection, queuer
+                    */
+                    eqftp.connection.create(params.connection, _.once(function (result) {
+                        if (!result) {
+                            if (params._id) {
+                                eqftp.utils.event({
+                                    action: 'callback',
+                                    _id: params._id,
+                                    callback: false
+                                });
+                            } else if (params.callback && eqftp.utils.check.isFunction(params.callback)) {
+                                params.callback(false);
+                            }
+                            return false;
+                        }
+                        try {
+                            c[params.connection.connection_hash].server.upload(params.queuer, function (err, data) {
                                 if (err) {
                                     eqftp.utils.event({
                                         action: 'debug',
