@@ -118,6 +118,8 @@ define({
     "eqftp__file_tree__type_file" : "file",
     
     
+    "eqftp__context__upload" : "Upload",
+    
     "eqftp__password_label" : "Password for settings",
     "eqftp__password_placeholder" : "Enter your password",
     
@@ -149,6 +151,7 @@ define({
     "eqftp__log__error__folder_not_found" : "Requested folder was not found",
     // Please note that folder name will be appended after next sentence:
     "eqftp__log__error__folder_not_found__exact" : "This folder was not found: ",
+    "eqftp__log__connection_by_localpath__not_found" : "Can't find connection related to this path: ",
     
     "eqftp__filesize_bytes" : "bytes",
     "eqftp__filesize_kilobytes" : "kb",
