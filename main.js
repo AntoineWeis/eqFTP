@@ -1008,7 +1008,7 @@ define(function (require, exports, module) {
                     if (!params.connection_string || !eqftp.utils.check.isString(params.connection_string)) {
                         return false;
                     }
-                    var m = params.connection_string.match(/((ftp|sftp):\/\/)?((.*?)(:(.*?))?@)?([A-Z\.\-\_a-z0-9]+)(:(\d+))?/i);
+                    //var m = params.connection_string.match(/((ftp|sftp):\/\/)?((.*?)(:(.*?))?@)?([A-Z\.\-\_a-z0-9]+)(:(\d+))?/i);
                     /*
                     ** $2 - protocol
                     ** $4 - login
@@ -1016,18 +1016,26 @@ define(function (require, exports, module) {
                     ** $7 - domain
                     ** $9 - port
                     */
+                    var m = params.connection_string.match(/((ftp|sftp):\/\/)?([^\s:]*)(:(.*))?@([^:\s]*)(:(.*))?/i);
+                    /*
+                    ** $2 - protocol
+                    ** $3 - login
+                    ** $5 - password
+                    ** $6 - domain
+                    ** $8 - port
+                    */
                     if (!m) {
                         return false;
                     }
-                    if (!m[4] || !m[7]) {
+                    if (!m[3] || !m[6]) {
                         return false;
                     }
                     return {
                         protocol: m[2],
-                        login: m[4],
-                        password: m[6],
-                        domain: m[7],
-                        port: m[9]
+                        login: m[3],
+                        password: m[5],
+                        domain: m[6],
+                        port: m[8]
                     };
                 },
                 uniq: function () {
@@ -1124,8 +1132,19 @@ define(function (require, exports, module) {
                 _getByLocalpath: function (localpath) {
                     var found = false;
                     if (_eqFTPCache.connection_temp_files && eqftp.utils.check.isObject(_eqFTPCache.connection_temp_files)) {
-                        _.forOwn(_eqFTPCache.connection_temp_files, function (v, i) {
-                            console.log(v, i);
+                        _.forOwn(_eqFTPCache.connection_temp_files, function (files, id) {
+                            files.some(function (v, i) {
+                                if (v.localpath === localpath) {
+                                    found = {
+                                        id: id,
+                                        remotepath: v.remotepath
+                                    };
+                                    return true;
+                                }
+                            });
+                            if (found) {
+                                return false;
+                            }
                         });
                     }
                     if (!found) {
@@ -1145,7 +1164,6 @@ define(function (require, exports, module) {
                                 if (r.test(localpath)) {
                                     var connection = eqftp.connections._getByID(v.id),
                                         remotepath = localpath.replace(r, '');
-                                    remotepath = eqftp.utils.normalize((connection.start_path || '') + '/' + remotepath);
                                     found = {
                                         id: v.id,
                                         remotepath: remotepath
@@ -1276,16 +1294,31 @@ define(function (require, exports, module) {
                         }
                         cb = params.callback || function () {};
                         if (connection.is_temporary) {
-                            params.localpath = eqftp.utils.normalize(connection.localpath + '/tmp_' + connection.id + '_' + eqftp.utils.uniq() + '.eqftp');
+                            var exists = false;
+                            if (_eqFTPCache.connection_temp_files && _eqFTPCache.connection_temp_files[params.connection_id]) {
+                                _eqFTPCache.connection_temp_files[params.connection_id].some(function (v, i) {
+                                    if (v.remotepath === params.remotepath) {
+                                        exists = v.localpath;
+                                        return true;
+                                    }
+                                });
+                            }
+                            if (!exists) {
+                                params.localpath = eqftp.utils.normalize(connection.localpath + '/tmp_' + connection.id + '_' + eqftp.utils.uniq() + '.eqftp');
+                            } else {
+                                params.localpath = exists;
+                            }
                             params.callback = function (result) {
                                 if (result) {
                                     if (!_eqFTPCache.connection_temp_files[params.connection_id]) {
                                         _eqFTPCache.connection_temp_files[params.connection_id] = [];
                                     }
-                                    _eqFTPCache.connection_temp_files[params.connection_id].push({
-                                        localpath: params.localpath,
-                                        remotepath: params.remotepath
-                                    });
+                                    if (!exists) {
+                                        _eqFTPCache.connection_temp_files[params.connection_id].push({
+                                            localpath: params.localpath,
+                                            remotepath: params.remotepath
+                                        });
+                                    }
 
                                     eqftp.queue.update({
                                         connection_id: connection.id,
@@ -1383,7 +1416,7 @@ define(function (require, exports, module) {
                                 });
                             }
                         };
-                        queuer.remotepath = (params.remotepath === undefined) ? connection.remotepath : params.remotepath;
+                        queuer.remotepath = (params.remotepath === undefined) ? (connection.remotepath || '') : params.remotepath;
                         queuer.remotepath = eqftp.utils.normalize(queuer.remotepath + '/');
                         break;
                     case 'rm':
