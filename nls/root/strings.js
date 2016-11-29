@@ -1,9 +1,17 @@
 define({
     'eqftp__toolbar__title' : "Open eqFTP Panel",
     
+    /**
+     * SERVER DROPDOWN
+     */
+    
     'eqftp__panel__search_input__placeholder' : "Search or Connect directly",
     'eqftp__panel__server_list__item__host' : "Host:",
     'eqftp__panel__server_list__item__user' : "User:",
+    
+    /**
+     * OPEN FILE/FOLDER DIALOGS
+     */
     
     'eqftp__file_opening_dialog_title' : "Choose file",
     'eqftp__files_opening_dialog_title' : "Choose files",
@@ -11,14 +19,12 @@ define({
     'eqftp__folders_opening_dialog_title' : "Choose folders",
     'eqftp__file_saving_dialog_title' : "Save file",
     
-    "eqftp__settings__main__local_projects_root" : "Local projects' root",
-    "eqftp__settings__main__settings_folder" : "Settings' folder",
-    "eqftp__settings__main__use_master_password" : "Use master password",
-    "eqftp__settings__main__use_notifications" : "Notifications",
-    "eqftp__settings__main__use_debug" : "Debug",
+    /**
+     * SETTINGS MENU
+     */
+    
     // Option to encrypt settings file
     "eqftp__settings__encrypt_settings_file" : "Encrypt settings file",
-    
     // This will be the label of section in Settings window
     "eqftp__settings_file_label" : "Settings file",
     "eqftp__settings_file_placeholder" : "Choose settings file",
@@ -28,6 +34,17 @@ define({
     "eqftp__settings_file_create_dialog_title" : "Save settings file",
     "eqftp__settings__main_settings_header" : "Main settings",
     "eqftp__settings__connections_settings_header" : "Connections",
+    
+    /**
+     * SETTINGS MENU, MAIN TAB
+     */
+    
+    "eqftp__settings__main__local_projects_root" : "Local projects' root",
+    "eqftp__settings__main__settings_folder" : "Settings' folder",
+    "eqftp__settings__main__use_master_password" : "Use master password",
+    "eqftp__settings__main__use_notifications" : "Notifications",
+    "eqftp__settings__main__use_debug" : "Debug",
+    
     "eqftp__settings__folder_for_projects_label" : "Folder for projects",
     "eqftp__settings__folder_for_projects_placeholder" : "Choose folder",
     "eqftp__settings__folder_for_projects_hint" : "Choose folder where eqFTP will save downloaded files by default. Each file will be saved in its own respective directory.",
@@ -36,6 +53,10 @@ define({
     "eqftp__settings__time_format_hint" : "Use dd - date, MM - month, yy - short year, yyyy - full year, hh - hours, mm - minutes, ss - seconds, SSS - milliseconds, O - timezone offset +hm",
     "eqftp__settings__debug_mode_label" : "Debug mode",
     "eqftp__settings__debug_mode_hint" : "Turn on debug mode. Everything will be printed in console.",
+    
+    /**
+     * SETTINGS MENU, CONNECTIONS TAB
+     */
     
     "eqftp__connection__create_new_button" : "Create Connection",
     
@@ -113,20 +134,30 @@ define({
     // host will be appended to phrase:
     "eqftp__connection__temporary_prefix" : "Temporary connection to ",
     
+    "eqftp__password_label" : "Password for settings",
+    "eqftp__password_placeholder" : "Enter your password",
     
     "eqftp__file_tree__type_directory" : "folder",
     "eqftp__file_tree__type_file" : "file",
     
+    /**
+     * CONTEXT MENU COMMANDS
+     */
     
     "eqftp__context__upload" : "Upload",
     
-    "eqftp__password_label" : "Password for settings",
-    "eqftp__password_placeholder" : "Enter your password",
+    /**
+     * WELCOME SCREEN TEXT
+     */
     
     "eqftp__welcome_screen__h1" : "Hi",
     "eqftp__welcome_screen__text" : "I'm glad to present you latest version of eqFTP.\r\nHope you'll like it.",
     "eqftp__welcome_screen__tour" : "Take a tour",
     "eqftp__welcome_screen__start" : "Let me work already",
+    
+    /**
+     * BUTTONS
+     */
     
     // Universal button that says "Cancel". Should close dialogs and prevent from going forward in stuff...
     "eqftp__button_cancel" : "Cancel",
@@ -138,20 +169,47 @@ define({
     "eqftp__button_no" : "No",
     "eqftp__button_save" : "Save",
     
+    /**
+     * SYSTEM WARNINGS
+     */
+    
     "error__settings_process_fromJSON_not_string" : "Can't read settings data. It's not a text.",
     "error__settings_process_toJSON_not_object" : "Can't save settings data. It's not an object.",
     "error__settings_process_fromJSON_not_json" : "Can't read settings data. It's not a JSON object.",
     
     "warning__password_ask_cancel" : "User cancelled password dialog.",
     
+    /**
+     * LOGS
+     */
+    
     "eqftp__log__settings__save_success" : "Settings saved",
     "eqftp__log__settings__save_error" : "Cannot save settings",
     "eqftp__log__settings__load_success" : "Settings loaded",
     
     "eqftp__log__error__folder_not_found" : "Requested folder was not found",
-    // Please note that folder name will be appended after next sentence:
-    "eqftp__log__error__folder_not_found__exact" : "This folder was not found: ",
-    "eqftp__log__connection_by_localpath__not_found" : "Can't find connection related to this path: ",
+    
+    // Combination of strings: 1 + value + 2. Leave one of strings empty if you don't need them, but do not delete it.
+    "eqftp__log__error__folder_not_found__exact__1" : "This folder was not found: ",
+    "eqftp__log__error__folder_not_found__exact__2" : "",
+    "eqftp__log__connection_by_localpath__not_found__1" : "Can't find connection related to this path: ",
+    "eqftp__log__connection_by_localpath__not_found__2" : "",
+    "eqftp__log__upload_file__error__1" : "There was an error uploading file ",
+    "eqftp__log__upload_file__error__2" : "",
+    "eqftp__log__upload_file__success__1" : "File ",
+    "eqftp__log__upload_file__success__2" : " successfully uploaded",
+    "eqftp__log__download_file__error__1" : "There was an error downloading file ",
+    "eqftp__log__download_file__error__2" : "",
+    "eqftp__log__download_file__success__1" : "File ",
+    "eqftp__log__download_file__success__2" : " successully downloaded",
+    "eqftp__log__ls__error__1" : "There was an error listing folder ",
+    "eqftp__log__ls__error__2" : "",
+    "eqftp__log__ls__success__1" : "Folder ",
+    "eqftp__log__ls__success__2" : " successully listed",
+    
+    /**
+     * FILESIZES
+     */
     
     "eqftp__filesize_bytes" : "bytes",
     "eqftp__filesize_kilobytes" : "kb",
