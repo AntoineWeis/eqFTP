@@ -1124,6 +1124,53 @@ define(function (require, exports, module) {
                     }
                     var time = dateFormat('hh:mm', new Date());
                     $(".eqftp-infofooter--msgholder").append('<div class="eqftp-infofooter--msg eqftp-infofooter--' + type + '"><span class="eqftp-infofooter--time">' + time + '</span><span>' + text + '</span></div>');
+                },
+                _watch: {
+                    reset: function () {
+                        if (_eqFTPCache.watching_objects && eqftp.utils.check.isArray(_eqFTPCache.watching_objects)) {
+                            _eqFTPCache.watching_objects.forEach(function (localpath, i) {
+                                FileSystem.resolve(localpath, function (err, item, stat) {
+                                    if (!err) {
+                                        FileSystem.unwatch(item, function (err) {
+                                        });
+                                    }
+                                });
+                            });
+                        }
+                        _eqFTPCache.watching_objects = [];
+                        if (_eqFTPCache.connection_temp_files && eqftp.utils.check.isObject(_eqFTPCache.connection_temp_files)) {
+                            _.forOwn(_eqFTPCache.connection_temp_files, function (files, i) {
+                                if (eqftp.utils.check.isArray(files)) {
+                                    files.forEach(function (v, i) {
+                                        eqftp.utils._watch.add(v.localpath);
+                                    });
+                                }
+                            });
+                        }
+                        _.forOwn(_eqFTPSettings.connections, function (value, key) {
+                            if (value.autoupload && value.localpath) {
+                                eqftp.utils._watch.add(value.localpath);
+                            }
+                        });
+                    },
+                    add: function (path) {
+                        if (_.indexOf(_eqFTPCache.watching_objects, path) == -1) {
+                            _eqFTPCache.watching_objects.push(path);
+                            FileSystem.resolve(path, function (err, item, stat) {
+                                if (!err) {
+                                    FileSystem.watch(item, function () { return true; }, eqftp.variables.defaults.ignores, function (err) {
+                                        if (err) {
+                                            console.error(err);
+                                        }
+                                    });
+                                }
+                            });
+                            _eqFTPCache.watching_objects.sort(function (a, b) {
+                                return a.length - b.length;
+                            });
+                            console.log(_eqFTPCache.watching_objects);
+                        }
+                    }
                 }
             },
             connections: {
@@ -1330,18 +1377,7 @@ define(function (require, exports, module) {
                                             remotepath: params.remotepath
                                         });
                                     }
-                                    if (_.indexOf(_eqFTPCache.watching_objects, params.localpath) == -1) {
-                                        _eqFTPCache.watching_objects.push(params.localpath);
-                                        FileSystem.resolve(params.localpath, function (err, item, stat) {
-                                            if (!err) {
-                                                FileSystem.watch(item, function () { return true; }, eqftp.variables.defaults.ignores, function (err) {
-                                                    if (err) {
-                                                        console.error(err);
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    }
+                                    eqftp.utils._watch.add(params.localpath);
 
                                     eqftp.queue.update({
                                         connection_id: connection.id,
@@ -1687,6 +1723,7 @@ define(function (require, exports, module) {
                         callback = function (error, data) {
                             if (!error) {
                                 _eqFTPSettings = data;
+                                eqftp.utils._watch.reset();
                                 $('.eqftp-panel__settings_window__settings_file_input').val(file_path);
                                 
                                 eqftp.variables.eqFTP.misc.last_settings_file = file_path;
@@ -1712,21 +1749,6 @@ define(function (require, exports, module) {
                             FileUtils.readAsText(fileEntry)
                                 .done(function (text) {
                                     eqftp._settings.process(text, 'fromJSON', function (data) {
-                                        _.forOwn(data.localpaths, function (v, i) {
-                                            var localpath = eqftp.utils.normalize(v + '/');
-                                            if (_.indexOf(_eqFTPCache.watching_objects, localpath) == -1) {
-                                                _eqFTPCache.watching_objects.push(localpath);
-                                                FileSystem.resolve(localpath, function (err, item, stat) {
-                                                    if (!err) {
-                                                        FileSystem.watch(item, function () { return true; }, eqftp.variables.defaults.ignores, function (err) {
-                                                            if (err) {
-                                                                console.error(err);
-                                                            }
-                                                        });
-                                                    }
-                                                });
-                                            }
-                                        });
                                         if (data) {
                                             callback(false, data);
                                             return;
@@ -1899,7 +1921,7 @@ define(function (require, exports, module) {
                 password_error: false,
                 defaults: {
                     ignores: [
-                        "**/(.pyc|.git|.gitmodules|.svn|.DS_Store|Thumbs.db|.hg|CVS|.hgtags|.idea|.c9revisions|.SyncArchive|.SyncID|.SyncIgnore)",
+                        "**/(.pyc|.git|.gitmodules|.svn|.DS_Store|Thumbs.db|.hg|CVS|.hgtags|.idea|.c9revisions|.SyncArchive|.SyncID|.SyncIgnore|.eqftp)",
                         "**/bower_components",
                         "**/node_modules"
                     ],
