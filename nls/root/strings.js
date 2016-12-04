@@ -206,6 +206,8 @@ define({
     "eqftp__log__ls__error__2" : "",
     "eqftp__log__ls__success__1" : "Folder ",
     "eqftp__log__ls__success__2" : " successully listed",
+    "eqftp__log__file_is_ignored__1" : "File ",
+    "eqftp__log__file_is_ignored__2" : " was not uploaded due to ignore setting",
     
     /**
      * FILESIZES
