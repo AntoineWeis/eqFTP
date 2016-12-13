@@ -150,12 +150,12 @@ define({
     "ERR_FILE_FILESIZE0" : "Can't download file. Filesize is 0.", //NEW
     "ERR_FILE_DOWNLOAD" : "Can't download file.", //NEW
     "ERR_FILE_UPLOAD" : "Can't upload file.", //NEW
-    "ERR_FILE_DOESNTEXIST" : "File doesn't exist", //NEW
-    "ERR_FILE_CANTRENAME" : "Can't rename file: ", //NEW
+    "ERR_FILE_DOESNTEXIST" : "Le fichier n'existe pas", //NEW
+    "ERR_FILE_CANTRENAME" : "Impossible de renommer le fichier: ", //NEW
     "ERR_FILE_CANTDELETE" : "Can't delete file: ", //NEW
-    "ERR_FILE_CANTCREATEDIR" : "Can't create folder: ", //NEW
-    "ERR_FILE_CANTDELETEDIR" : "Can't delete folder: ", //NEW
-    "ERR_FILE_CANTCREATEFILE" : "Can't create file: ", //NEW
+    "ERR_FILE_CANTCREATEDIR" : "Impossible de créer ce dossier: ", //NEW
+    "ERR_FILE_CANTDELETEDIR" : "Impossible de supprimer ce dossier: ", //NEW
+    "ERR_FILE_CANTCREATEFILE" : "Impossible de créer ce fichier: ", //NEW
     "ERR_FOLDER_OPEN" : "There's an error opening folder as project", //NEW
 
 	"CONTEXTM_DOWNLOAD" : "Télécharger",
@@ -164,9 +164,9 @@ define({
 	"CONTEXTM_OPEN" : "Ouvrir",
 	"CONTEXTM_DELETE" : "Supprimer",
 	"CONTEXTM_RENAME" : "Renommer",
-	"CONTEXTM_REDOWNLOAD" : "Download from server", //NEW
-    "CONTEXTM_CREATEFILE" : "Create file", //NEW
-    "CONTEXTM_CREATEFOLDER" : "Create folder", //NEW
+	"CONTEXTM_REDOWNLOAD" : "Retélécharger depuis le serveur", //NEW
+    "CONTEXTM_CREATEFILE" : "Nouveau fichier", //NEW
+    "CONTEXTM_CREATEFOLDER" : "Nouveau dossier", //NEW
 
 	"OTHER_SELECT_SERVER_DROPDOWN" : "Sélectionnez le serveur distant à ouvrir ...",
 	"OTHER_ERROR" : "Erreur",
